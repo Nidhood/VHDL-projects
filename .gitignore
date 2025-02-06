@@ -29,15 +29,15 @@ incremental_db/   # Incremental compilation database
 # ==============================
 # Simulation files (ModelSim, etc.)
 # ==============================
-*.vcd             # Waveform dump files
-*.wlf             # ModelSim waveform files
-*.wdb             # ModelSim simulation results
-*.vstf            # ModelSim test files
-*.vsim            # ModelSim simulation log
-*.ucf             # User Constraint Files
-modelsim.ini      # ModelSim configuration file
-transcript        # ModelSim log file
-work/             # Work directory (simulation)
+*.vcd                           # Waveform dump files
+*.wlf                           # ModelSim waveform files
+*.wdb                           # ModelSim simulation results
+*.vstf                          # ModelSim test files
+*.vsim                          # ModelSim simulation log
+*.ucf                           # User Constraint Files
+modelsim.ini                    # ModelSim configuration file
+transcript                      # ModelSim log file
+projects/*/sim/work/            # Work directory (simulation)
 
 # ==============================
 # Temporary & cache files
