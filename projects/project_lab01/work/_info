@@ -1,0 +1,78 @@
+m255
+K3
+13
+cModel Technology
+Z0 dC:\Users\ivanm\OneDrive\Documentos\VHDL-projects\projects\project_lab01
+Eonebitequality
+Z1 w1738863041
+Z2 DPx3 std 6 textio 0 22 5>J:;AW>W0[[dW0I6EN1Q0
+Z3 DPx4 ieee 14 std_logic_1164 0 22 5=aWaoGZSMWIcH0i^f`XF1
+Z4 dC:\Users\ivanm\OneDrive\Documentos\VHDL-projects\projects\project_lab01
+Z5 8C:/Users/ivanm/OneDrive/Documentos/VHDL-projects/projects/project_lab01/sim/oneBitEquality.vhd
+Z6 FC:/Users/ivanm/OneDrive/Documentos/VHDL-projects/projects/project_lab01/sim/oneBitEquality.vhd
+l0
+L9
+VDfa@Amg80P94M]C_>iHG31
+Z7 OV;C;10.1d;51
+32
+Z8 !s108 1738863443.089000
+Z9 !s90 -reportprogress|300|-work|work|C:/Users/ivanm/OneDrive/Documentos/VHDL-projects/projects/project_lab01/sim/oneBitEquality.vhd|
+Z10 !s107 C:/Users/ivanm/OneDrive/Documentos/VHDL-projects/projects/project_lab01/sim/oneBitEquality.vhd|
+Z11 o-work work -O0
+Z12 tExplicit 1
+!s100 [YYW@1:e@mOcI@hY>f1?m3
+!i10b 1
+Agatelevel
+R2
+R3
+Z13 DEx4 work 14 onebitequality 0 22 Dfa@Amg80P94M]C_>iHG31
+l18
+L17
+V:dnc2WRo4keWlQ9ZNEmic3
+!s100 FX<[<Am>X;]i36UHlQzc>1
+R7
+32
+R8
+R9
+R10
+R11
+R12
+!i10b 1
+Etestprotocol
+Z14 w1738862937
+Z15 DPx4 ieee 11 numeric_std 0 22 O3PF8EB`?j9=z7KT`fn941
+R2
+R3
+R4
+Z16 8C:/Users/ivanm/OneDrive/Documentos/VHDL-projects/projects/project_lab01/sim/TestProtocol.vhd
+Z17 FC:/Users/ivanm/OneDrive/Documentos/VHDL-projects/projects/project_lab01/sim/TestProtocol.vhd
+l0
+L6
+V1K47OWDlhdKzMaI3@R`Q<3
+!s100 8in6R`TaC9SjYGOk2CjHH0
+R7
+32
+!i10b 1
+Z18 !s108 1738863443.218000
+Z19 !s90 -reportprogress|300|-work|work|C:/Users/ivanm/OneDrive/Documentos/VHDL-projects/projects/project_lab01/sim/TestProtocol.vhd|
+Z20 !s107 C:/Users/ivanm/OneDrive/Documentos/VHDL-projects/projects/project_lab01/sim/TestProtocol.vhd|
+R11
+R12
+Atestprotocolarch
+R13
+R15
+R2
+R3
+DEx4 work 12 testprotocol 0 22 1K47OWDlhdKzMaI3@R`Q<3
+l15
+L9
+V80;JRG:6lf0e[1z`lY6GG0
+!s100 ChQ4M0kLB0AKH_EMkKRjH0
+R7
+32
+!i10b 1
+R18
+R19
+R20
+R11
+R12
