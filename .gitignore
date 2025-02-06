@@ -1,22 +1,94 @@
-### AL ###
-#Template for AL projects for Dynamics 365 Business Central
-#launch.json folder
-.vscode/
-#Cache folder
-.alcache/
-#Symbols folder
-.alpackages/
-#Snapshots folder
-.snapshots/
-#Testing Output folder
-.output/
-#Extension App-file
-*.app
-#Rapid Application Development File
-rad.json
-#Translation Base-file
-*.g.xlf
-#License-file
-*.flf
-#Test results file
-TestResults.xml
+# ==============================
+# Quartus generated files
+# ==============================
+*.qws             # Quartus workspace file
+*.qdf             # Quartus database file
+*.smsg            # Quartus internal messages
+*.rpt             # Quartus reports
+*.chg             # Change log files
+*.bak             # Backup files
+*.summary         # Summary report files
+*.done            # Compilation status file
+*.pin             # Pin assignment files
+*.qmsg            # Quartus message log
+
+# ==============================
+# Compilation databases & logs
+# ==============================
+db/               # Quartus compilation database folder
+incremental_db/   # Incremental compilation database
+*.jdi             # JTAG debug information
+*.sld             # SLD files for debugging
+*.cdf             # Device configuration file
+*.qdb             # Quartus database binary file
+*.ddb             # Design database file
+*.tcl             # Quartus-generated TCL scripts
+*.log             # General log files
+*.bak             # Backup files
+
+# ==============================
+# Simulation files (ModelSim, etc.)
+# ==============================
+*.vcd             # Waveform dump files
+*.wlf             # ModelSim waveform files
+*.wdb             # ModelSim simulation results
+*.vstf            # ModelSim test files
+*.vsim            # ModelSim simulation log
+*.ucf             # User Constraint Files
+modelsim.ini      # ModelSim configuration file
+transcript        # ModelSim log file
+work/             # Work directory (simulation)
+
+# ==============================
+# Temporary & cache files
+# ==============================
+*.tmp             # Temporary files
+*.~*              # Temporary backup files
+*.dep             # Dependency files
+*.d               # Dependency files
+*.idb             # Incremental database files
+*.pdb             # Program database files
+*.ilk             # Incremental linker files
+*.o               # Object files
+*.obj             # Object files
+*.str             # String files
+*.twr             # Timing report files
+*.xml             # XML configuration files
+*.xrf             # Cross-references files
+*.ip_user_files/  # Generated IP core files
+*.sim/            # Simulation cache
+*.cache/          # Cache directory
+
+# ==============================
+# Synthesis tool generated files
+# ==============================
+*.edf             # EDIF netlist files
+*.edn             # EDIF netlist files
+*.ncd             # Xilinx Native Circuit Description
+*.ngc             # Netlist files
+*.ngd             # Netlist design files
+*.bit             # Bitstream files
+*.map             # Mapping report files
+*.mrp             # Mapping results file
+*.bgn             # Floorplanning files
+*.xwbt            # Xilinx WebTalk files
+
+# ==============================
+# Configuration & IDE-specific files
+# ==============================
+__pycache__/      # Python cache files
+*.pyc             # Python compiled files
+*.DS_Store        # macOS system file
+*.vscode/         # VS Code project settings
+*.idea/           # IntelliJ-based IDE settings
+*.iml             # IntelliJ module files
+
+# ==============================
+# Synthesis reports & analysis files
+# ==============================
+*.syr             # Synthesis reports
+*.html            # Generated HTML reports
+*.xpr             # Xilinx Project File
+*.ngm             # NGD mapping files
+*.ps              # PostScript reports
+*.rpt             # Generic report files
