@@ -1,0 +1,78 @@
+m255
+K3
+13
+cModel Technology
+Z0 dC:\Users\ivanm\OneDrive\Documentos\VHDL-projects\projects\project_lab01\pnt4_2
+Epnt4_2
+Z1 w1738910298
+Z2 DPx3 std 6 textio 0 22 5>J:;AW>W0[[dW0I6EN1Q0
+Z3 DPx4 ieee 14 std_logic_1164 0 22 5=aWaoGZSMWIcH0i^f`XF1
+Z4 dC:\Users\ivanm\OneDrive\Documentos\VHDL-projects\projects\project_lab01\pnt4_2
+Z5 8C:/Users/ivanm/OneDrive/Documentos/VHDL-projects/projects/project_lab01/pnt4_2/pnt4_2.vhd
+Z6 FC:/Users/ivanm/OneDrive/Documentos/VHDL-projects/projects/project_lab01/pnt4_2/pnt4_2.vhd
+l0
+L10
+VeFSPA[9:MG;WDQ_=>flWN3
+Z7 OV;C;10.1d;51
+32
+Z8 !s108 1738910431.346000
+Z9 !s90 -reportprogress|300|-work|work|C:/Users/ivanm/OneDrive/Documentos/VHDL-projects/projects/project_lab01/pnt4_2/pnt4_2.vhd|
+Z10 !s107 C:/Users/ivanm/OneDrive/Documentos/VHDL-projects/projects/project_lab01/pnt4_2/pnt4_2.vhd|
+Z11 o-work work -O0
+Z12 tExplicit 1
+!s100 B6VdN^5_FaFGdV]>42E8b1
+!i10b 1
+Agatelevel
+R2
+R3
+Z13 DEx4 work 6 pnt4_2 0 22 eFSPA[9:MG;WDQ_=>flWN3
+l20
+L19
+VJO3YUWBg40?@=OHNPf_Un0
+R7
+32
+R8
+R9
+R10
+R11
+R12
+!s100 59??h2=NXb6F[U_aKoPee1
+!i10b 1
+Etest_pnt4_2
+Z14 w1738910321
+Z15 DPx4 ieee 11 numeric_std 0 22 O3PF8EB`?j9=z7KT`fn941
+R2
+R3
+R4
+Z16 8C:/Users/ivanm/OneDrive/Documentos/VHDL-projects/projects/project_lab01/pnt4_2/test_pnt4_2.vhd
+Z17 FC:/Users/ivanm/OneDrive/Documentos/VHDL-projects/projects/project_lab01/pnt4_2/test_pnt4_2.vhd
+l0
+L5
+V4197;OGz5[dVVbHJG0Rmn3
+!s100 g2kj[aTl8<2283MYcPCn93
+R7
+32
+!i10b 1
+Z18 !s108 1738910431.448000
+Z19 !s90 -reportprogress|300|-work|work|C:/Users/ivanm/OneDrive/Documentos/VHDL-projects/projects/project_lab01/pnt4_2/test_pnt4_2.vhd|
+Z20 !s107 C:/Users/ivanm/OneDrive/Documentos/VHDL-projects/projects/project_lab01/pnt4_2/test_pnt4_2.vhd|
+R11
+R12
+Atest_pnt4_2_arch
+R13
+R15
+R2
+R3
+Z21 DEx4 work 11 test_pnt4_2 0 22 4197;OGz5[dVVbHJG0Rmn3
+l15
+L8
+Z22 VImh<XcJ@8jNO6PJzE^ca`3
+Z23 !s100 V>gg4cegZ;P0JA0d6Ch0=2
+R7
+32
+!i10b 1
+R18
+R19
+R20
+R11
+R12

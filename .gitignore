@@ -37,7 +37,7 @@ incremental_db/   # Incremental compilation database
 *.ucf                           # User Constraint Files
 modelsim.ini                    # ModelSim configuration file
 transcript                      # ModelSim log file
-projects/*/sim/work/            # Work directory (simulation)
+projects/*/*/work/            # Work directory (simulation)
 
 # ==============================
 # Temporary & cache files
