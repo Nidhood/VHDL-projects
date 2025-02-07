@@ -3,7 +3,7 @@ USE IEEE.STD_LOGIC_1164.ALL;
 ---------------------------------------------------------------------------------
 --                                                                             -- 
 --    Point 4.2: Designing a logic circuit with the conditions:                --
---    - Function will be '1' if the amount of '1's in the input is odd.        --
+--    - Function will be '1' if the amount of '1's in the input is even.       --
 --    Author: Ivan Dario Orozco Ibanez                                         --
 --                                                                             --
 ---------------------------------------------------------------------------------

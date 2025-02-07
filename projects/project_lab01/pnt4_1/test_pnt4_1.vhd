@@ -2,10 +2,10 @@ LIBRARY IEEE;
 USE IEEE.STD_LOGIC_1164.ALL;
 USE IEEE.NUMERIC_STD.ALL;
 
-ENTITY test_pnt4_2 IS
-END ENTITY test_pnt4_2;
+ENTITY test_pnt4_1 IS
+END ENTITY test_pnt4_1;
 
-ARCHITECTURE test_pnt4_2_Arch OF test_pnt4_2 IS
+ARCHITECTURE test_pnt4_1_Arch OF test_pnt4_1 IS
 
     SIGNAL x1_tb : STD_LOGIC;
     SIGNAL x2_tb : STD_LOGIC;
@@ -14,7 +14,7 @@ ARCHITECTURE test_pnt4_2_Arch OF test_pnt4_2 IS
 
 BEGIN
 
-    X1 : ENTITY work.pnt4_2
+    X1 : ENTITY work.pnt4_1
 
         PORT MAP(
             x1 => x1_tb,
@@ -53,4 +53,4 @@ BEGIN
         '0' AFTER 120 ns,
         '1' AFTER 140 ns;
 
-END test_pnt4_2_Arch;
+END test_pnt4_1_Arch;
