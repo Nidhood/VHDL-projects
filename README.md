@@ -5,22 +5,17 @@ Welcome to the **VHDL Projects Repository**! This repository contains multiple p
 ## 📂 Repository Structure
 
 ```bash
-vhdl-projects/            # Main repository folder
-│── docs/                 # General documentation
-│── templates/            # Templates for new projects
-│── common/               # Reusable VHDL modules (e.g., IP cores, components)
-│── projects/             # Individual project folders
-│    ├── project_1/
-│    │   ├── src/         # VHDL source files
-│    │   ├── sim/         # Simulation files (testbenches, scripts, etc.)
-│    │   ├── quartus/     # Quartus project files (.qpf, .qsf, etc.)
-│    │   ├── synthesis/   # Synthesis results
-│    │   ├── results/     # Timing analysis and reports
-│    │   ├── README.md    # Project-specific documentation
-│    ├── project_2/       # Additional projects follow the same structure
-│── .gitignore            # Ignore unnecessary files
-│── README.md             # This file
-│── LICENSE               # License information
+vhdl-projects/                   # Main repository folder
+│── 📂 docs/                     # General documentation
+│── 📂 templates/                # Templates for new projects
+│── 📂 common/                   # Reusable VHDL modules (e.g., IP cores, components)
+│── 📂 projects/                 # Individual project folders
+│      ├── 📂  project_1/        # Additional projects follow the same structure
+│      ├── 📂  project_2/        # Additional projects follow the same structure
+│      ├── .../                  # Additional projects follow the same structure
+│── 📝 .gitignore                 # Ignore unnecessary files
+│── 📝 README.md                  # This file
+│── 📝 LICENSE                    # License information
 ```
 
 ## 🛠️ Requirements
