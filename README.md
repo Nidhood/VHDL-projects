@@ -30,7 +30,7 @@ To work with these projects, you need:
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/yourusername/vhdl-projects.git
+   git clone https://github.com/Nidhood/VHDL-projects
    ```
 2. **Navigate to a project folder:**
    ```bash
