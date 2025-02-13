@@ -8,7 +8,7 @@ USE IEEE.STD_LOGIC_1164.ALL;
 ---------------------------------------------------------------------------------
 ENTITY 7seg_4counter IS
     PORT (
-        x : IN STD_LOGIC_VECTOR(3 DOWNTO 0);
+        in_7seg : IN STD_LOGIC_VECTOR(3 DOWNTO 0);
         en : IN STD_LOGIC;
         out_7seg : OUT STD_LOGIC_VECTOR(6 DOWNTO 0)
     );
@@ -16,7 +16,7 @@ END ENTITY 7seg_4counter;
 ---------------------------------------------------------------------------------
 ARCHITECTURE 7seg_4counter_arch OF 7seg_4counter IS
 BEGIN
-    enx <= en & x;
+    enx <= en & in_7seg;
     WITH enx SELECT
 
         -- 0 --
