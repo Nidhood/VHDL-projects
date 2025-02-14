@@ -22,7 +22,8 @@ BEGIN
     concat3 <= A3 & B3 & Carry2;
 
     WITH concat0 SELECT
-        S0 <= '0' WHEN "000",
+        S0 <=
+        '0' WHEN "000",
         '1' WHEN "001",
         '1' WHEN "010",
         '0' WHEN "011",
@@ -33,7 +34,8 @@ BEGIN
         '0' WHEN OTHERS;
 
     WITH concat0 SELECT
-        Carry0 <= '0' WHEN "000",
+        Carry0 <=
+        '0' WHEN "000",
         '0' WHEN "001",
         '0' WHEN "010",
         '1' WHEN "011",
@@ -44,7 +46,8 @@ BEGIN
         '0' WHEN OTHERS;
 
     WITH concat1 SELECT
-        S1 <= '0' WHEN "000",
+        S1 <=
+        '0' WHEN "000",
         '1' WHEN "001",
         '1' WHEN "010",
         '0' WHEN "011",
@@ -55,7 +58,8 @@ BEGIN
         '0' WHEN OTHERS;
 
     WITH concat1 SELECT
-        Carry1 <= '0' WHEN "000",
+        Carry1 <=
+        '0' WHEN "000",
         '0' WHEN "001",
         '0' WHEN "010",
         '1' WHEN "011",
@@ -66,7 +70,8 @@ BEGIN
         '0' WHEN OTHERS;
 
     WITH concat2 SELECT
-        S2 <= '0' WHEN "000",
+        S2 <=
+        '0' WHEN "000",
         '1' WHEN "001",
         '1' WHEN "010",
         '0' WHEN "011",
@@ -77,7 +82,8 @@ BEGIN
         '0' WHEN OTHERS;
 
     WITH concat2 SELECT
-        Carry2 <= '0' WHEN "000",
+        Carry2 <=
+        '0' WHEN "000",
         '0' WHEN "001",
         '0' WHEN "010",
         '1' WHEN "011",
@@ -88,7 +94,8 @@ BEGIN
         '0' WHEN OTHERS;
 
     WITH concat3 SELECT
-        S3 <= '0' WHEN "000",
+        S3 <=
+        '0' WHEN "000",
         '1' WHEN "001",
         '1' WHEN "010",
         '0' WHEN "011",
@@ -99,7 +106,8 @@ BEGIN
         '0' WHEN OTHERS;
 
     WITH concat3 SELECT
-        Cout <= '0' WHEN "000",
+        Cout <=
+        '0' WHEN "000",
         '0' WHEN "001",
         '0' WHEN "010",
         '1' WHEN "011",
