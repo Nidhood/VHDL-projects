@@ -26,3 +26,4 @@ BEGIN
     Mux1 : ENTITY WORK.mux2_1_with_select PORT MAP(s0, x3, x4, m2);
     Mux2 : ENTITY WORK.mux2_1_with_select PORT MAP(s1, m1, m2, y);
 END pnt1_3_mux4_1_arch;
+

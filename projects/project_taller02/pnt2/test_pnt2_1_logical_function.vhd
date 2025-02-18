@@ -37,3 +37,4 @@ BEGIN
         "1111" AFTER 300 ns; -- Esperado: '0'
 
 END ARCHITECTURE test_pnt2_1_logical_function_arch;
+

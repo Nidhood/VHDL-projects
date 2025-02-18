@@ -28,3 +28,4 @@ BEGIN
         );
 
 END pnt2_1_logical_function_arch;
+
