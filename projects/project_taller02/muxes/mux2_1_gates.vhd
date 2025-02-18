@@ -1,11 +1,6 @@
 LIBRARY IEEE;
 USE IEEE.STD_LOGIC_1164.ALL;
 ---------------------------------------------------------------------------------
---                                                                             -- 
---    'oneBitEquality' compares two bits to determine if their value is equal  --
---               The output eq is set to one if thath is true                  -- 
---                                                                             -- 
----------------------------------------------------------------------------------
 ENTITY mux2_1_gates IS
     PORT (
         x1 : IN STD_LOGIC;
