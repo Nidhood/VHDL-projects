@@ -11,7 +11,7 @@ ARCHITECTURE behaviour OF fpga01 IS
 BEGIN
     WITH bin SELECT
         led <=
-		      '1' WHEN "01",
-				'0' WHEN OTHERS;
+	    '1' WHEN "01",
+	    '0' WHEN OTHERS;
 			
 END behaviour;
