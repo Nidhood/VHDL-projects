@@ -18,7 +18,7 @@ ENTITY bin_to_7seg IS
 
 END ENTITY;
 
-ARCHITECTURE generic_mux_arch OF generic_mux IS
+ARCHITECTURE bin_to_7seg_arch OF bin_to_7seg IS
 
     SIGNAL bin_out : STD_LOGIC_VECTOR(6 DOWNTO 0);
     SIGNAL dec_out : STD_LOGIC_VECTOR(6 DOWNTO 0);
@@ -26,21 +26,21 @@ ARCHITECTURE generic_mux_arch OF generic_mux IS
 
 BEGIN
 
-    bin_inst : ENTITY work.bin_to_7seg
+    bin_inst : ENTITY work.bin_mux
         PORT MAP(
             x => x(3 DOWNTO 0),
             sseg => bin_out
         );
 
-    dec_inst : ENTITY work.dec_to_7seg
+    dec_inst : ENTITY work.dec_mux
         PORT MAP(
             x => x(3 DOWNTO 0),
             sseg => dec_out
         );
 
-    hex_inst : ENTITY work.hex_to_7seg
+    hex_inst : ENTITY work.hex_mux
         PORT MAP(
-            x => x(6 DOWNTO 3), -- 4 bits: [6,5,4,3]
+            x => x(6 DOWNTO 3),
             sseg => hex_out
         );
 
@@ -51,4 +51,4 @@ BEGIN
         hex_out WHEN "10",
         "1000000" WHEN OTHERS;
 
-END generic_mux_arch;
+END bin_to_7seg_arch;
