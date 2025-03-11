@@ -8,14 +8,14 @@
 LIBRARY IEEE;
 USE IEEE.STD_LOGIC_1164.ALL;
 
-ENTITY dec_to_7seg IS
+ENTITY dec_mux IS
 
     PORT (
         x : IN STD_LOGIC_VECTOR(3 DOWNTO 0);
         sseg : OUT STD_LOGIC_VECTOR(6 DOWNTO 0));
 END ENTITY;
 
-ARCHITECTURE dec_to_7seg_arch OF dec_to_7seg IS
+ARCHITECTURE dec_mux_arch OF dec_mux IS
 
 BEGIN
 
@@ -32,4 +32,4 @@ BEGIN
         "0000000" WHEN "1000", -- 8
         "0010000" WHEN OTHERS; -- 9
 
-END dec_to_7seg_arch;
+END dec_mux_arch;

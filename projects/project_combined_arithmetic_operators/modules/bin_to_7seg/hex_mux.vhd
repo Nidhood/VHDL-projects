@@ -8,14 +8,14 @@
 LIBRARY IEEE;
 USE IEEE.STD_LOGIC_1164.ALL;
 
-ENTITY hex_to_7seg IS
+ENTITY hex_mux IS
 
     PORT (
         x : IN STD_LOGIC_VECTOR(3 DOWNTO 0);
         sseg : OUT STD_LOGIC_VECTOR(6 DOWNTO 0));
 END ENTITY;
 
-ARCHITECTURE hex_to_7seg_arch OF hex_to_7seg IS
+ARCHITECTURE hex_mux_arch OF hex_mux IS
 
 BEGIN
 
@@ -38,4 +38,4 @@ BEGIN
         "0000110" WHEN "1110", -- E
         "0001110" WHEN OTHERS; -- F
 
-END hex_to_7seg_arch;
+END hex_mux_arch;

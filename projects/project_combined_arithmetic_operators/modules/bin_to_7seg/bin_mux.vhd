@@ -8,14 +8,14 @@
 LIBRARY IEEE;
 USE IEEE.STD_LOGIC_1164.ALL;
 
-ENTITY bin_to_7seg IS
+ENTITY bin_mux IS
 
     PORT (
         x : IN STD_LOGIC_VECTOR(3 DOWNTO 0);
         sseg : OUT STD_LOGIC_VECTOR(6 DOWNTO 0));
 END ENTITY;
 
-ARCHITECTURE bin_to_7seg_arch OF bin_to_7seg IS
+ARCHITECTURE bin_mux_arch OF bin_mux IS
 
 BEGIN
 
@@ -24,4 +24,4 @@ BEGIN
         "1000000" WHEN "0000", -- 0
         "1111001" WHEN OTHERS; -- 1
 
-END bin_to_7seg_arch;
+END bin_mux_arch;
