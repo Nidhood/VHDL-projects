@@ -13,22 +13,42 @@ ENTITY bin_to_7seg IS
     PORT (
         x : IN STD_LOGIC_VECTOR(6 DOWNTO 0);
         in_sel : IN STD_LOGIC_VECTOR(1 DOWNTO 0);
-        out_data : OUT STD_LOGIC_VECTOR(7 DOWNTO 0)
+        sseg : OUT STD_LOGIC_VECTOR(7 DOWNTO 0)
     );
 
 END ENTITY;
 
 ARCHITECTURE generic_mux_arch OF generic_mux IS
+
+    SIGNAL bin_out : STD_LOGIC_VECTOR(6 DOWNTO 0);
+    SIGNAL dec_out : STD_LOGIC_VECTOR(6 DOWNTO 0);
+    SIGNAL hex_out : STD_LOGIC_VECTOR(6 DOWNTO 0);
+
 BEGIN
 
-    bin_mux : ENTITY work.bin_mux PORT MAP (x(1 DOWNTO 0), in_sel(0), out_data(6 DOWNTO 0));
-    dec_mux : ENTITY work.dec_mux PORT MAP (x(3 DOWNTO 0), in_sel(1), out_data(7 DOWNTO 0));
-    hex_mux : ENTITY work.hex_mux PORT MAP (x(6 DOWNTO 0), in_sel(1), out_data(7 DOWNTO 0));
+    bin_inst : ENTITY work.bin_to_7seg
+        PORT MAP(
+            x => x(3 DOWNTO 0),
+            sseg => bin_out
+        );
 
-    WHIT in_sel SELECT
-    out_data <=
-        bin_mux WHEN "00",
-        dec_mux WHEN "01",
-        hex_mux WHEN OTHERS;
+    dec_inst : ENTITY work.dec_to_7seg
+        PORT MAP(
+            x => x(3 DOWNTO 0),
+            sseg => dec_out
+        );
+
+    hex_inst : ENTITY work.hex_to_7seg
+        PORT MAP(
+            x => x(6 DOWNTO 3), -- 4 bits: [6,5,4,3]
+            sseg => hex_out
+        );
+
+    WITH in_sel SELECT
+        sseg(6 DOWNTO 0) <=
+        bin_out WHEN "00",
+        dec_out WHEN "01",
+        hex_out WHEN "10",
+        "1000000" WHEN OTHERS;
 
 END generic_mux_arch;
