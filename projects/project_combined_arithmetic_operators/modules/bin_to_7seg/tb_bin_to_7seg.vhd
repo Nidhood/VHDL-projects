@@ -14,9 +14,9 @@ END ENTITY tb_bin_to_7seg;
 ARCHITECTURE tb_bin_to_7seg_arch OF tb_bin_to_7seg IS
 
     -- Señales de prueba
-    SIGNAL x_tb : STD_LOGIC_VECTOR(6 DOWNTO 0) := (OTHERS => '0');
-    SIGNAL sel_tb : STD_LOGIC_VECTOR(1 DOWNTO 0) := "00";
-    SIGNAL sseg_tb : STD_LOGIC_VECTOR(7 DOWNTO 0);
+    SIGNAL x_tb : STD_LOGIC_VECTOR(6 DOWNTO 0);
+    SIGNAL sel_tb : STD_LOGIC_VECTOR(1 DOWNTO 0);
+    SIGNAL sseg_tb : STD_LOGIC_VECTOR(6 DOWNTO 0);
 
 BEGIN
 

@@ -13,7 +13,7 @@ ENTITY bin_to_7seg IS
     PORT (
         x : IN STD_LOGIC_VECTOR(6 DOWNTO 0);
         in_sel : IN STD_LOGIC_VECTOR(1 DOWNTO 0);
-        sseg : OUT STD_LOGIC_VECTOR(7 DOWNTO 0)
+        sseg : OUT STD_LOGIC_VECTOR(6 DOWNTO 0)
     );
 
 END ENTITY;
