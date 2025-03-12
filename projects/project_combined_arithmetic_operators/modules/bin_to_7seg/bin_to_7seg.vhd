@@ -11,7 +11,7 @@ USE IEEE.STD_LOGIC_1164.ALL;
 ENTITY bin_to_7seg IS
 
     PORT (
-        x : IN STD_LOGIC_VECTOR(6 DOWNTO 0);
+        x : IN STD_LOGIC_VECTOR(3 DOWNTO 0);
         in_sel : IN STD_LOGIC_VECTOR(1 DOWNTO 0);
         sseg : OUT STD_LOGIC_VECTOR(6 DOWNTO 0)
     );
@@ -40,7 +40,7 @@ BEGIN
 
     hex_inst : ENTITY work.hex_mux
         PORT MAP(
-            x => x(6 DOWNTO 3),
+            x => x(3 DOWNTO 0),
             sseg => hex_out
         );
 
