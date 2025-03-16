@@ -146,5 +146,5 @@ PORT MAP (
     S   => s(6),
     Cout => s(7)
 );
-			  
+			 
 END MultiplierArch;
