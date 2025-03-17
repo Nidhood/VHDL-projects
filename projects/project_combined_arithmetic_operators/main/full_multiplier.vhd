@@ -5,7 +5,7 @@ ENTITY Multiplier IS
     PORT (
         x : IN STD_LOGIC_VECTOR(3 DOWNTO 0);
         y : IN STD_LOGIC_VECTOR(3 DOWNTO 0);
-        s : OUT STD_LOGIC_VECTOR(9 DOWNTO 0)
+        s : OUT STD_LOGIC_VECTOR(7 DOWNTO 0)
     );
 END ENTITY Multiplier;
 
