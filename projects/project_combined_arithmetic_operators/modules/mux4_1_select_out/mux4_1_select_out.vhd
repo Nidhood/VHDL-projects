@@ -25,7 +25,7 @@ BEGIN
         signal8 WHEN sel = "101" ELSE
         signal7 WHEN sel = "110" ELSE
         signal3 WHEN sel = "111" ELSE
-        "0000000000";
+        0000000000""0000000000";
 
 END mux4_1_select_outArch;
 

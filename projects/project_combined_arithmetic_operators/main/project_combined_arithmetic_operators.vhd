@@ -14,33 +14,33 @@ USE IEEE.STD_LOGIC_1164.ALL;
 ------------------------------------------------------------------------------------------
 -- Intructions:
 --                            Mux#1  Mux#2  Mux#3  Mux#4     Instruccion  Adder/Substracter               
--- (Control instruction #1)   00     01     10     11        000          0000
--- (Control instruction #2)   00     01     10     11        000          1000
--- (Control instruction #3)   00     10     01     11        000          0000
--- (Control instruction #4)   00     10     01     11        000          1000
--- (Control instruction #5)   00     11     10     01        000          0000
--- (Control instruction #6)   00     11     10     01        000          1000
--- (Control instruction #7)   10     11     00     01        000          1000
--- (Control instruction #8)   01     11     00     10        000          1000
--- (Control instruction #9)   10     01     00     11        000          1000
--- (Control instruction #10)  00     00     00     00        101          0000
--- (Control instruction #11)  00     00     00     00        011          0100
--- (Control instruction #12)  00     00     01     01        000          1000
--- (Control instruction #13)  00     00     10     10        000          1000
--- (Control instruction #14)  00     00     11     11        000          1000
--- (Control instruction #15)  01     01     00     00        000          1000
--- (Control instruction #16)  01     01     10     10        000          1000
--- (Control instruction #17)  01     01     11     11        000          1000
--- (Control instruction #18)  00     00     00     00        111          0010
--- (Control instruction #19)  00     01     00     00        001          0000
--- (Control instruction #20)  00     10     00     00        001          0010
--- (Control instruction #21)  00     01     00     00        001          0100
--- (Control instruction #22)  00     01     00     00        001          0001
--- (Control instruction #23)  01     00     00     00        001          0010
--- (Control instruction #24)  00     00     00     00        010          0000
--- (Control instruction #25)  00     00     00     00        010          0100
--- (Control instruction #26)  00     00     10     11        100          0000
--- (Control instruction #27)  10     11     00     00        011          1000
+-- (Control instruction #1)   00     01     10     11        0000          0000
+-- (Control instruction #2)   00     01     10     11        0000          1000
+-- (Control instruction #3)   00     10     01     11        0000          0000
+-- (Control instruction #4)   00     10     01     11        0000          1000
+-- (Control instruction #5)   00     11     10     01        0000          0000
+-- (Control instruction #6)   00     11     10     01        0000          1000
+-- (Control instruction #7)   10     11     00     01        0000          1000
+-- (Control instruction #8)   01     11     00     10        0000          1000
+-- (Control instruction #9)   10     01     00     11        0000          1000
+-- (Control instruction #10)  00     00     00     00        0101          0000
+-- (Control instruction #11)  00     00     00     00        0011          0100
+-- (Control instruction #12)  00     00     01     01        0000          1000
+-- (Control instruction #13)  00     00     10     10        0000          1000
+-- (Control instruction #14)  00     00     11     11        0000          1000
+-- (Control instruction #15)  01     01     00     00        0000          1000
+-- (Control instruction #16)  01     01     10     10        0000          1000
+-- (Control instruction #17)  01     01     11     11        0000          1000
+-- (Control instruction #18)  00     00     00     00        0111          0010
+-- (Control instruction #19)  00     01     00     00        0001          0000
+-- (Control instruction #20)  00     10     00     00        0001          0010
+-- (Control instruction #21)  00     01     00     00        0001          0100
+-- (Control instruction #22)  00     01     00     00        0001          0001
+-- (Control instruction #23)  01     00     00     00        0001          0010
+-- (Control instruction #24)  00     00     00     00        0010          0000
+-- (Control instruction #25)  00     00     00     00        0010          0100
+-- (Control instruction #26)  00     00     10     11        0100          0000
+-- (Control instruction #27)  10     11     00     00        0011          1000
 ------------------------------------------------------------------------------------------
 
 ENTITY project_combined_arithmetic_operators IS
@@ -60,20 +60,10 @@ ENTITY project_combined_arithmetic_operators IS
         sseg_2 : OUT STD_LOGIC_VECTOR(6 DOWNTO 0); -- Primer digito
         sseg_3 : OUT STD_LOGIC_VECTOR(6 DOWNTO 0); -- Segundo digito
         sseg_4 : OUT STD_LOGIC_VECTOR(6 DOWNTO 0); -- Tercer digito
-
-        -- Pruebas:
-        binary_response : OUT STD_LOGIC_VECTOR(9 DOWNTO 0);
-        multiplier_response_1 : OUT STD_LOGIC_VECTOR(9 DOWNTO 0);
-        multiplier_response_2 : OUT STD_LOGIC_VECTOR(9 DOWNTO 0);
-        adder_substractor_response_1 : OUT STD_LOGIC_VECTOR(9 DOWNTO 0);
-        adder_substractor_response_2 : OUT STD_LOGIC_VECTOR(9 DOWNTO 0);
-        adder_substractor_response_3 : OUT STD_LOGIC_VECTOR(9 DOWNTO 0);
-        adder_substractor_response_4 : OUT STD_LOGIC_VECTOR(9 DOWNTO 0);
-        bit_shift_left_response_1 : OUT STD_LOGIC_VECTOR(9 DOWNTO 0);
-        bit_shift_left_response_2 : OUT STD_LOGIC_VECTOR(9 DOWNTO 0);
-        signal_aux_3_response : OUT STD_LOGIC_VECTOR(3 DOWNTO 0);
-        signal_aux_4_response : OUT STD_LOGIC_VECTOR(3 DOWNTO 0);
-        power_response : OUT STD_LOGIC_VECTOR(9 DOWNTO 0)
+        number_A_sseg : OUT STD_LOGIC_VECTOR(6 DOWNTO 0); -- Numero A en 7 segmentos
+        number_B_sseg : OUT STD_LOGIC_VECTOR(6 DOWNTO 0); -- Numero B en 7 segmentos
+        number_C_sseg : OUT STD_LOGIC_VECTOR(6 DOWNTO 0); -- Numero C en 7 segmentos
+        number_D_sseg : OUT STD_LOGIC_VECTOR(6 DOWNTO 0) -- Numero D en 7 segmentos
     );
 
 END ENTITY project_combined_arithmetic_operators;
@@ -81,7 +71,7 @@ END ENTITY project_combined_arithmetic_operators;
 ARCHITECTURE project_combined_arithmetic_operators_arch OF project_combined_arithmetic_operators IS
 
     -- Senales:
-    SIGNAL control_instructions : STD_LOGIC_VECTOR(14 DOWNTO 0);
+    SIGNAL control_instructions : STD_LOGIC_VECTOR(15 DOWNTO 0);
 
     -- Senales de salida para los componentes de multiplicaciones:
     SIGNAL signal_1, signal_2 : STD_LOGIC_VECTOR(9 DOWNTO 0);
@@ -95,6 +85,12 @@ ARCHITECTURE project_combined_arithmetic_operators_arch OF project_combined_arit
     -- Senales para potencia:
     SIGNAL signal_9 : STD_LOGIC_VECTOR(9 DOWNTO 0);
 
+    -- Senales para complemento a 2:
+    SIGNAL A_aux_10 : STD_LOGIC_VECTOR(9 DOWNTO 0);
+    SIGNAL signal_10 : STD_LOGIC_VECTOR(9 DOWNTO 0);
+    SIGNAL signal_11 : STD_LOGIC_VECTOR(9 DOWNTO 0);
+    SIGNAL signal_12 : STD_LOGIC_VECTOR(9 DOWNTO 0);
+
     -- Senales de salida para los componentes de desplazamiento a 1 hacia la izquierda (multipliacion por  2):
     SIGNAL signal_5, signal_6 : STD_LOGIC_VECTOR(9 DOWNTO 0);
 
@@ -105,7 +101,7 @@ ARCHITECTURE project_combined_arithmetic_operators_arch OF project_combined_arit
     SIGNAL mux_7_out : STD_LOGIC_VECTOR(3 DOWNTO 0);
 
     -- Senales de salida para los selectors:
-    SIGNAL select_1_outX, select_1_outY : STD_LOGIC_VECTOR(9 DOWNTO 0);
+    SIGNAL select_1_outX, select_1_outY, select_1_outZ : STD_LOGIC_VECTOR(9 DOWNTO 0);
     SIGNAL select_2_outX, select_2_outY : STD_LOGIC_VECTOR(9 DOWNTO 0);
     SIGNAL signal_response : STD_LOGIC_VECTOR(9 DOWNTO 0);
 
@@ -117,36 +113,34 @@ BEGIN
 
     -- Look-Up table de las instrucciones para cada operacion:
     control_instructions <=
-        "000110110000000" WHEN n_operation = "00000" ELSE
-        "000110110000100" WHEN n_operation = "00001" ELSE
-        "001001110000000" WHEN n_operation = "00010" ELSE
-        "001001110000100" WHEN n_operation = "00011" ELSE
-        "001110010000000" WHEN n_operation = "00100" ELSE
-        "001110010000100" WHEN n_operation = "00101" ELSE
-        "101100010000100" WHEN n_operation = "00110" ELSE
-        "011100100000100" WHEN n_operation = "00111" ELSE
-        "100100110000100" WHEN n_operation = "01000" ELSE
-        "000000001010000" WHEN n_operation = "01001" ELSE
-        "000000000110100" WHEN n_operation = "01010" ELSE
-        "000001010000100" WHEN n_operation = "01011" ELSE
-        "000010100000100" WHEN n_operation = "01100" ELSE
-        "000011110000100" WHEN n_operation = "01101" ELSE
-        "010100000000100" WHEN n_operation = "01110" ELSE
-        "010110100000100" WHEN n_operation = "01111" ELSE
-        "010111110000100" WHEN n_operation = "10000" ELSE
-        "000000001110010" WHEN n_operation = "10001" ELSE
-
-        "000000010010000" WHEN n_operation = "10010" ELSE
-        "000000010010010" WHEN n_operation = "10011" ELSE
-        "000000010010100" WHEN n_operation = "10100" ELSE
-        "000000010010001" WHEN n_operation = "10101" ELSE
-        "000001000010010" WHEN n_operation = "10110" ELSE
-
-        "000000000100000" WHEN n_operation = "10111" ELSE
-        "000000000100100" WHEN n_operation = "11000" ELSE
-        "000010111000000" WHEN n_operation = "11001" ELSE
-        "000010110111000" WHEN n_operation = "11010" ELSE
-        "000000000000000"; -- Default case
+        "0001101100000000" WHEN n_operation = "00000" ELSE
+        "0001101100000100" WHEN n_operation = "00001" ELSE
+        "0010011100000000" WHEN n_operation = "00010" ELSE
+        "0010011100000100" WHEN n_operation = "00011" ELSE
+        "0011100100000000" WHEN n_operation = "00100" ELSE
+        "0011100100000100" WHEN n_operation = "00101" ELSE
+        "1011000100000100" WHEN n_operation = "00110" ELSE
+        "0111001000000100" WHEN n_operation = "00111" ELSE
+        "1001001100000100" WHEN n_operation = "01000" ELSE
+        "0000000001010000" WHEN n_operation = "01001" ELSE
+        "0001000010010000" WHEN n_operation = "01010" ELSE
+        "0000010100000100" WHEN n_operation = "01011" ELSE
+        "0000101000000100" WHEN n_operation = "01100" ELSE
+        "0000111100000100" WHEN n_operation = "01101" ELSE
+        "0101000000000100" WHEN n_operation = "01110" ELSE
+        "0101101000000100" WHEN n_operation = "01111" ELSE
+        "0101111100000100" WHEN n_operation = "10000" ELSE
+        "0001000010000000" WHEN n_operation = "10001" ELSE
+        "0000000100010000" WHEN n_operation = "10010" ELSE
+        "0000000100010010" WHEN n_operation = "10011" ELSE
+        "0000000100010100" WHEN n_operation = "10100" ELSE
+        "0000000100010001" WHEN n_operation = "10101" ELSE
+        "0000010000010010" WHEN n_operation = "10110" ELSE
+        "0000000000100000" WHEN n_operation = "10111" ELSE
+        "0000000000100100" WHEN n_operation = "11000" ELSE
+        "0000101101000000" WHEN n_operation = "11001" ELSE
+        "0000101100111000" WHEN n_operation = "11010" ELSE
+        "0000000000000000"; -- Default case
 
     ------------------------------------------------------------
     --                 MUX(4:1): 1,2,3,4,5,6                  --
@@ -157,8 +151,8 @@ BEGIN
             B => B,
             C => C,
             D => D,
-            sel(1) => control_instructions(14),
-            sel(0) => control_instructions(13),
+            sel(1) => control_instructions(15),
+            sel(0) => control_instructions(14),
             OUTPUT => mux_1_out
         );
 
@@ -168,8 +162,8 @@ BEGIN
             B => B,
             C => C,
             D => D,
-            sel(1) => control_instructions(12),
-            sel(0) => control_instructions(11),
+            sel(1) => control_instructions(13),
+            sel(0) => control_instructions(12),
             OUTPUT => mux_2_out
         );
 
@@ -179,8 +173,8 @@ BEGIN
             B => B,
             C => C,
             D => D,
-            sel(1) => control_instructions(10),
-            sel(0) => control_instructions(9),
+            sel(1) => control_instructions(11),
+            sel(0) => control_instructions(10),
             OUTPUT => mux_3_out
         );
 
@@ -190,8 +184,8 @@ BEGIN
             B => B,
             C => C,
             D => D,
-            sel(1) => control_instructions(8),
-            sel(0) => control_instructions(7),
+            sel(1) => control_instructions(9),
+            sel(0) => control_instructions(8),
             OUTPUT => mux_4_out
         );
 
@@ -201,8 +195,8 @@ BEGIN
             B => B,
             C => C,
             D => D,
-            sel(1) => control_instructions(10),
-            sel(0) => control_instructions(9),
+            sel(1) => control_instructions(11),
+            sel(0) => control_instructions(10),
             OUTPUT => mux_5_out
         );
 
@@ -212,8 +206,8 @@ BEGIN
             B => B,
             C => C,
             D => D,
-            sel(1) => control_instructions(8),
-            sel(0) => control_instructions(7),
+            sel(1) => control_instructions(9),
+            sel(0) => control_instructions(8),
             OUTPUT => mux_6_out
         );
 
@@ -228,7 +222,7 @@ BEGIN
         );
 
     ------------------------------------------------------------
-    --                   Selectors 1,2,3                      --
+    --                 Selectors 1,2,3,4                      --
     ------------------------------------------------------------ 
     select_1 : ENTITY WORK.mux6_2_when_else_1(mux6_2_when_else_1Arch)
         PORT MAP(
@@ -238,7 +232,7 @@ BEGIN
             signal4 => signal_4,
             signal5 => signal_5,
             signal6 => signal_6,
-            signal9 => signal_9,
+            sel(3) => control_instructions(7),
             sel(2) => control_instructions(6),
             sel(1) => control_instructions(5),
             sel(0) => control_instructions(4),
@@ -250,6 +244,7 @@ BEGIN
         PORT MAP(
             signal2 => signal_2,
             signal7 => signal_7,
+            sel(3) => control_instructions(7),
             sel(2) => control_instructions(6),
             sel(1) => control_instructions(5),
             sel(0) => control_instructions(4),
@@ -264,12 +259,26 @@ BEGIN
             signal1 => signal_1,
             signal8 => signal_8,
             signal9 => signal_9,
+            signal11 => signal_11,
+            signal12 => signal_12,
+            sel(3) => control_instructions(7),
             sel(2) => control_instructions(6),
             sel(1) => control_instructions(5),
             sel(0) => control_instructions(4),
             OUTPUT => signal_response
         );
-    binary_response <= signal_response;
+
+    A_aux_10 <= "000000" & A;
+    select_4 : ENTITY WORK.mux2_1_when_else_4(mux2_1_when_else_4Arch)
+        PORT MAP(
+            signal9 => signal_9,
+            signal10 => A_aux_10,
+            sel(3) => control_instructions(7),
+            sel(2) => control_instructions(6),
+            sel(1) => control_instructions(5),
+            sel(0) => control_instructions(4),
+            OUTPUT => signal_12
+        );
 
     ------------------------------------------------------------
     --                   Multiplicaciones                     --
@@ -280,9 +289,7 @@ BEGIN
             y => mux_2_out,
             s => signal_1(7 DOWNTO 0)
         );
-
     signal_1(9 DOWNTO 8) <= "00";
-    multiplier_response_1 <= signal_1;
 
     full_multiplier_2 : ENTITY work.Multiplier(MultiplierArch)
         PORT MAP(
@@ -290,9 +297,7 @@ BEGIN
             y => mux_4_out,
             s => signal_2(7 DOWNTO 0)
         );
-
     signal_2(9 DOWNTO 8) <= "00";
-    multiplier_response_2 <= signal_2;
 
     ------------------------------------------------------------
     --                   Sumas y restas                       --
@@ -305,7 +310,6 @@ BEGIN
             R => signal_8,
             COUT => OPEN
         );
-    adder_substractor_response_1 <= signal_8;
 
     full_adder_substractor_2 : ENTITY work.FULL_ADDER_SUBSTRACTOR_10(STRUCT)
         PORT MAP(
@@ -315,7 +319,6 @@ BEGIN
             R => signal_7,
             COUT => OPEN
         );
-    adder_substractor_response_2 <= signal_7;
 
     full_adder_substractor_3 : ENTITY work.FULL_ADDER_SUBSTRACTOR_4(STRUCT)
         PORT MAP(
@@ -326,7 +329,6 @@ BEGIN
             CARRY => signal_cout_3,
             OVERFLOW => OPEN
         );
-    signal_aux_3_response <= signal_aux_3;
 
     Sign_Extended_1 : ENTITY work.S_ext(S_ext_Arch)
         PORT MAP(
@@ -335,7 +337,6 @@ BEGIN
             OP => control_instructions(1),
             R => signal_3
         );
-    adder_substractor_response_3 <= signal_3;
 
     full_adder_substractor_4 : ENTITY work.FULL_ADDER_SUBSTRACTOR_4(STRUCT)
         PORT MAP(
@@ -346,7 +347,6 @@ BEGIN
             CARRY => signal_cout_4,
             OVERFLOW => OPEN
         );
-    signal_aux_4_response <= signal_aux_4;
 
     Sign_Extended_2 : ENTITY work.S_ext(S_ext_Arch)
         PORT MAP(
@@ -355,7 +355,6 @@ BEGIN
             OP => control_instructions(0),
             R => signal_4
         );
-    adder_substractor_response_4 <= signal_4;
 
     ------------------------------------------------------------
     --                Multipliacion por 2                     --
@@ -365,17 +364,15 @@ BEGIN
             X => A,
             S => signal_5
         );
-    bit_shift_left_response_1 <= signal_5;
 
     bit_shift_left_2 : ENTITY work.bit_shift_left(bit_shift_left_arch)
         PORT MAP(
             X => B,
             S => signal_6
         );
-    bit_shift_left_response_2 <= signal_6;
 
     ------------------------------------------------------------
-    --                Potencia                                --
+    --                       Potencia                         --
     ------------------------------------------------------------
     power : ENTITY work.power_3cases(no_if_for_arch)
         PORT MAP(
@@ -383,7 +380,16 @@ BEGIN
             Y => mux_7_out,
             S => signal_9
         );
-    power_response <= signal_9;
+
+    ------------------------------------------------------------
+    --                    Complemento a 2                     --
+    ------------------------------------------------------------
+
+    two_complement : ENTITY work.complement2_10bits(ripple_adder)
+        PORT MAP(
+            X => signal_12,
+            S => signal_11
+        );
 
     ------------------------------------------------------------
     --                Bin to digits                           --
@@ -398,6 +404,33 @@ BEGIN
             H2 => second_digit_hex,
             H3 => third_digit_hex,
             S => sseg_1
+        );
+    ------------------------------------------------------------
+    --                Bin to 7 Segment numbers                --
+    ------------------------------------------------------------
+
+    number_A : ENTITY work.dec_mux
+        PORT MAP(
+            x => A,
+            sseg => number_A_sseg
+        );
+
+    number_B : ENTITY work.dec_mux
+        PORT MAP(
+            x => B,
+            sseg => number_B_sseg
+        );
+
+    number_C : ENTITY work.dec_mux
+        PORT MAP(
+            x => C,
+            sseg => number_C_sseg
+        );
+
+    number_D : ENTITY work.dec_mux
+        PORT MAP(
+            x => D,
+            sseg => number_D_sseg
         );
 
     ------------------------------------------------------------
