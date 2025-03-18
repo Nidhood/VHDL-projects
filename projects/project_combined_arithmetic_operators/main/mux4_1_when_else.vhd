@@ -20,6 +20,7 @@ BEGIN
     OUTPUT <= A WHEN sel = "00" ELSE
         B WHEN sel = "01" ELSE
         C WHEN sel = "10" ELSE
-        D WHEN sel = "11";
+        D WHEN sel = "11" ELSE
+        "0000";
 
 END mux4_1_when_elseArch;

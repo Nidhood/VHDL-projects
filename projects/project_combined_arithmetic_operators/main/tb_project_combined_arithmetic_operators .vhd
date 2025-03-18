@@ -14,7 +14,8 @@ ARCHITECTURE behavior OF tb_project_combined_arithmetic_operators IS
         PORT (
             n_operation : IN STD_LOGIC_VECTOR(4 DOWNTO 0);
             select_dec_or_hex : IN STD_LOGIC;
-            A, B, C, D : IN STD_LOGIC_VECTOR(3 DOWNTO 0);
+            A, B : IN STD_LOGIC_VECTOR(3 DOWNTO 0);
+            C, D : IN STD_LOGIC_VECTOR(2 DOWNTO 0);
             sseg_1 : OUT STD_LOGIC;
             sseg_2, sseg_3, sseg_4 : OUT STD_LOGIC_VECTOR(6 DOWNTO 0);
             number_A_sseg : OUT STD_LOGIC_VECTOR(6 DOWNTO 0);
@@ -29,7 +30,8 @@ ARCHITECTURE behavior OF tb_project_combined_arithmetic_operators IS
     --------------------------------------------------------------------
     SIGNAL n_operation : STD_LOGIC_VECTOR(4 DOWNTO 0) := (OTHERS => '0');
     SIGNAL select_dec_or_hex : STD_LOGIC := '0';
-    SIGNAL A, B, C, D : STD_LOGIC_VECTOR(3 DOWNTO 0) := (OTHERS => '0');
+    SIGNAL A, B : STD_LOGIC_VECTOR(3 DOWNTO 0) := (OTHERS => '0');
+    SIGNAL C, D : STD_LOGIC_VECTOR(2 DOWNTO 0) := (OTHERS => '0');
     SIGNAL sseg_1 : STD_LOGIC;
     SIGNAL sseg_2, sseg_3, sseg_4 : STD_LOGIC_VECTOR(6 DOWNTO 0);
     SIGNAL number_A_sseg : STD_LOGIC_VECTOR(6 DOWNTO 0);
@@ -60,19 +62,19 @@ BEGIN
     );
 
     --------------------------------------------------------------------
-    -- Proceso de estímulo (sin usar binary_response ni report)
+    -- Proceso de estímulo
     --------------------------------------------------------------------
     stim : PROCESS
     BEGIN
         ----------------------------------------------------------------
-        -- Ajustar valores de A,B,C,D y n_operation en secuencia
+        -- Ajustar valores de A, B, C, D y n_operation en secuencia
         ----------------------------------------------------------------
 
         -- Fijamos A=1, B=2, C=3, D=4
-        A <= "0001"; -- 1
-        B <= "0010"; -- 2
-        C <= "0011"; -- 3
-        D <= "0100"; -- 4
+        A <= "0101"; -- 1
+        B <= "0001"; -- 2
+        C <= "011"; -- 3 en 3 bits
+        D <= "100"; -- 4 en 3 bits
         select_dec_or_hex <= '0'; -- salida en decimal
 
         -- Operación 1: n_operation = "00000"

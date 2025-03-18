@@ -8,11 +8,11 @@ END ENTITY tb_bin_to_7seg;
 ARCHITECTURE tb_bin_to_7seg_arch OF tb_bin_to_7seg IS
 
     -- Entradas para cada conversor (4 bits)
-    SIGNAL dec_in_tb : STD_LOGIC_VECTOR(3 DOWNTO 0);
-    SIGNAL hex_in_tb : STD_LOGIC_VECTOR(3 DOWNTO 0);
+    SIGNAL dec_in_tb : STD_LOGIC_VECTOR(3 DOWNTO 0) := "0000";
+    SIGNAL hex_in_tb : STD_LOGIC_VECTOR(3 DOWNTO 0) := "0000";
 
     -- Selector: '0' para decimal, '1' para hexadecimal
-    SIGNAL sel_tb : STD_LOGIC;
+    SIGNAL sel_tb : STD_LOGIC := '0';
 
     -- Salida para display de 7 segmentos
     SIGNAL sseg_tb : STD_LOGIC_VECTOR(6 DOWNTO 0);
@@ -39,6 +39,8 @@ BEGIN
         -- Modo Decimal: in_sel = '0'
         ----------------------------------------------------------------------------
         sel_tb <= '0'; -- Selección: modo decimal
+        hex_in_tb <= "0000"; -- Fijar entrada hexadecimal para evitar flotantes
+
         -- Se aplican dígitos decimales de 0 a 9 (un dígito cada 40 ns)
         dec_in_tb <= "0000"; -- 0
         WAIT FOR 40 ns;
@@ -65,6 +67,8 @@ BEGIN
         -- Modo Hexadecimal: in_sel = '1'
         ----------------------------------------------------------------------------
         sel_tb <= '1'; -- Selección: modo hexadecimal
+        dec_in_tb <= "0000"; -- Fijar entrada decimal para evitar interferencias
+
         -- Se aplican dígitos hexadecimales: 0, 2, 5, A, B, C, D, E, F (un dígito cada 40 ns)
         hex_in_tb <= "0000"; -- 0
         WAIT FOR 40 ns;
