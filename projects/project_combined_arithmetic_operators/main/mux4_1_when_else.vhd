@@ -23,13 +23,3 @@ BEGIN
         D WHEN sel = "11";
 
 END mux4_1_when_elseArch;
-
-------------------------------------------------------------------------------------------
---BlockN: ENTITY WORK.mux4_1_when_else(mux4_1_when_elseArch)
---PORT MAP   (A => SLV,
---            B => SLV,
---            C => SLV,
---            D => SLV,
---            sel => SLV,
---            OUTPUT => SLV
---           );

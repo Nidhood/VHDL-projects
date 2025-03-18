@@ -52,8 +52,8 @@ ENTITY project_combined_arithmetic_operators IS
         select_dec_or_hex : IN STD_LOGIC;
         A : IN STD_LOGIC_VECTOR(3 DOWNTO 0);
         B : IN STD_LOGIC_VECTOR(3 DOWNTO 0);
-        C : IN STD_LOGIC_VECTOR(3 DOWNTO 0);
-        D : IN STD_LOGIC_VECTOR(3 DOWNTO 0);
+        C : IN STD_LOGIC_VECTOR(2 DOWNTO 0);
+        D : IN STD_LOGIC_VECTOR(2 DOWNTO 0);
 
         -- Salidas:
         sseg_1 : OUT STD_LOGIC; -- Signo 
@@ -70,8 +70,11 @@ END ENTITY project_combined_arithmetic_operators;
 
 ARCHITECTURE project_combined_arithmetic_operators_arch OF project_combined_arithmetic_operators IS
 
-    -- Senales:
+    -- Senales control:
     SIGNAL control_instructions : STD_LOGIC_VECTOR(15 DOWNTO 0);
+
+    -- Senales auxiliares de C y D para completar 4 bits:
+    SIGNAL C_aux, D_aux : STD_LOGIC_VECTOR(3 DOWNTO 0);
 
     -- Senales de salida para los componentes de multiplicaciones:
     SIGNAL signal_1, signal_2 : STD_LOGIC_VECTOR(9 DOWNTO 0);
@@ -143,14 +146,21 @@ BEGIN
         "0000000000000000"; -- Default case
 
     ------------------------------------------------------------
+    --             Completar C y D a 4 bits:                  --
+    ------------------------------------------------------------  
+
+    C_aux <= "0" & C;
+    D_aux <= "0" & D;
+
+    ------------------------------------------------------------
     --                 MUX(4:1): 1,2,3,4,5,6                  --
     ------------------------------------------------------------     
     MUX1 : ENTITY WORK.mux4_1_when_else(mux4_1_when_elseArch)
         PORT MAP(
             A => A,
             B => B,
-            C => C,
-            D => D,
+            C => C_aux,
+            D => D_aux,
             sel(1) => control_instructions(15),
             sel(0) => control_instructions(14),
             OUTPUT => mux_1_out
@@ -160,8 +170,8 @@ BEGIN
         PORT MAP(
             A => A,
             B => B,
-            C => C,
-            D => D,
+            C => C_aux,
+            D => D_aux,
             sel(1) => control_instructions(13),
             sel(0) => control_instructions(12),
             OUTPUT => mux_2_out
@@ -171,8 +181,8 @@ BEGIN
         PORT MAP(
             A => A,
             B => B,
-            C => C,
-            D => D,
+            C => C_aux,
+            D => D_aux,
             sel(1) => control_instructions(11),
             sel(0) => control_instructions(10),
             OUTPUT => mux_3_out
@@ -182,8 +192,8 @@ BEGIN
         PORT MAP(
             A => A,
             B => B,
-            C => C,
-            D => D,
+            C => C_aux,
+            D => D_aux,
             sel(1) => control_instructions(9),
             sel(0) => control_instructions(8),
             OUTPUT => mux_4_out
@@ -193,8 +203,8 @@ BEGIN
         PORT MAP(
             A => A,
             B => B,
-            C => C,
-            D => D,
+            C => C_aux,
+            D => D_aux,
             sel(1) => control_instructions(11),
             sel(0) => control_instructions(10),
             OUTPUT => mux_5_out
@@ -204,8 +214,8 @@ BEGIN
         PORT MAP(
             A => A,
             B => B,
-            C => C,
-            D => D,
+            C => C_aux,
+            D => D_aux,
             sel(1) => control_instructions(9),
             sel(0) => control_instructions(8),
             OUTPUT => mux_6_out
@@ -341,8 +351,8 @@ BEGIN
     full_adder_substractor_4 : ENTITY work.FULL_ADDER_SUBSTRACTOR_4(STRUCT)
         PORT MAP(
             OP => control_instructions(0),
-            A => C (3 DOWNTO 0),
-            B => D (3 DOWNTO 0),
+            A => C_aux,
+            B => D_aux,
             R => signal_aux_4,
             CARRY => signal_cout_4,
             OVERFLOW => OPEN
@@ -423,13 +433,13 @@ BEGIN
 
     number_C : ENTITY work.hex_mux(hex_mux_arch)
         PORT MAP(
-            x => C,
+            x => C_aux,
             sseg => number_C_sseg
         );
 
     number_D : ENTITY work.hex_mux(hex_mux_arch)
         PORT MAP(
-            x => D,
+            x => D_aux,
             sseg => number_D_sseg
         );
 
