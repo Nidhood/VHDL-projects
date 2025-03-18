@@ -409,25 +409,25 @@ BEGIN
     --                Bin to 7 Segment numbers                --
     ------------------------------------------------------------
 
-    number_A : ENTITY work.dec_mux
+    number_A : ENTITY work.hex_mux(hex_mux_arch)
         PORT MAP(
             x => A,
             sseg => number_A_sseg
         );
 
-    number_B : ENTITY work.dec_mux
+    number_B : ENTITY work.hex_mux(hex_mux_arch)
         PORT MAP(
             x => B,
             sseg => number_B_sseg
         );
 
-    number_C : ENTITY work.dec_mux
+    number_C : ENTITY work.hex_mux(hex_mux_arch)
         PORT MAP(
             x => C,
             sseg => number_C_sseg
         );
 
-    number_D : ENTITY work.dec_mux
+    number_D : ENTITY work.hex_mux(hex_mux_arch)
         PORT MAP(
             x => D,
             sseg => number_D_sseg
