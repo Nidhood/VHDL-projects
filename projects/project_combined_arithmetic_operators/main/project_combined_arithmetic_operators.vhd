@@ -59,7 +59,21 @@ ENTITY project_combined_arithmetic_operators IS
         sseg_1 : OUT STD_LOGIC; -- Signo 
         sseg_2 : OUT STD_LOGIC_VECTOR(6 DOWNTO 0); -- Primer digito
         sseg_3 : OUT STD_LOGIC_VECTOR(6 DOWNTO 0); -- Segundo digito
-        sseg_4 : OUT STD_LOGIC_VECTOR(6 DOWNTO 0) -- Tercer digito
+        sseg_4 : OUT STD_LOGIC_VECTOR(6 DOWNTO 0); -- Tercer digito
+
+        -- Pruebas:
+        binary_response : OUT STD_LOGIC_VECTOR(9 DOWNTO 0);
+        multiplier_response_1 : OUT STD_LOGIC_VECTOR(9 DOWNTO 0);
+        multiplier_response_2 : OUT STD_LOGIC_VECTOR(9 DOWNTO 0);
+        adder_substractor_response_1 : OUT STD_LOGIC_VECTOR(9 DOWNTO 0);
+        adder_substractor_response_2 : OUT STD_LOGIC_VECTOR(9 DOWNTO 0);
+        adder_substractor_response_3 : OUT STD_LOGIC_VECTOR(9 DOWNTO 0);
+        adder_substractor_response_4 : OUT STD_LOGIC_VECTOR(9 DOWNTO 0);
+        bit_shift_left_response_1 : OUT STD_LOGIC_VECTOR(9 DOWNTO 0);
+        bit_shift_left_response_2 : OUT STD_LOGIC_VECTOR(9 DOWNTO 0);
+        signal_aux_3_response : OUT STD_LOGIC_VECTOR(3 DOWNTO 0);
+        signal_aux_4_response : OUT STD_LOGIC_VECTOR(3 DOWNTO 0);
+        power_response : OUT STD_LOGIC_VECTOR(9 DOWNTO 0)
     );
 
 END ENTITY project_combined_arithmetic_operators;
@@ -70,85 +84,73 @@ ARCHITECTURE project_combined_arithmetic_operators_arch OF project_combined_arit
     SIGNAL control_instructions : STD_LOGIC_VECTOR(14 DOWNTO 0);
 
     -- Senales de salida para los componentes de multiplicaciones:
-    SIGNAL signal_1 : STD_LOGIC_VECTOR(9 DOWNTO 0);
-    SIGNAL signal_2 : STD_LOGIC_VECTOR(9 DOWNTO 0);
+    SIGNAL signal_1, signal_2 : STD_LOGIC_VECTOR(9 DOWNTO 0);
 
     -- Senales de salida para los componentes de suma/resta:
-    SIGNAL signal_aux_3 : STD_LOGIC_VECTOR(3 DOWNTO 0);
-    SIGNAL signal_aux_4 : STD_LOGIC_VECTOR(3 DOWNTO 0);
+    SIGNAL signal_aux_3, signal_aux_4 : STD_LOGIC_VECTOR(3 DOWNTO 0);
+    SIGNAL signal_cout_3, signal_cout_4 : STD_LOGIC;
+    SIGNAL signal_3, signal_4 : STD_LOGIC_VECTOR(9 DOWNTO 0);
+    SIGNAL signal_7, signal_8 : STD_LOGIC_VECTOR(9 DOWNTO 0);
 
-    SIGNAL signal_cout_3 : STD_LOGIC;
-    SIGNAL signal_cout_4 : STD_LOGIC;
-
-    SIGNAL signal_3 : STD_LOGIC_VECTOR(9 DOWNTO 0);
-    SIGNAL signal_4 : STD_LOGIC_VECTOR(9 DOWNTO 0);
-
-    SIGNAL signal_7 : STD_LOGIC_VECTOR(9 DOWNTO 0);
-    SIGNAL signal_8 : STD_LOGIC_VECTOR(9 DOWNTO 0);
+    -- Senales para potencia:
+    SIGNAL signal_9 : STD_LOGIC_VECTOR(9 DOWNTO 0);
 
     -- Senales de salida para los componentes de desplazamiento a 1 hacia la izquierda (multipliacion por  2):
-    SIGNAL signal_5 : STD_LOGIC_VECTOR(9 DOWNTO 0);
-    SIGNAL signal_6 : STD_LOGIC_VECTOR(9 DOWNTO 0);
+    SIGNAL signal_5, signal_6 : STD_LOGIC_VECTOR(9 DOWNTO 0);
 
     -- Senales de salida para los muxes:
-    SIGNAL mux_1_out : STD_LOGIC_VECTOR(3 DOWNTO 0);
-    SIGNAL mux_2_out : STD_LOGIC_VECTOR(3 DOWNTO 0);
-    SIGNAL mux_3_out : STD_LOGIC_VECTOR(3 DOWNTO 0);
-    SIGNAL mux_4_out : STD_LOGIC_VECTOR(3 DOWNTO 0);
-    SIGNAL mux_5_out : STD_LOGIC_VECTOR(3 DOWNTO 0);
-    SIGNAL mux_6_out : STD_LOGIC_VECTOR(3 DOWNTO 0);
+    SIGNAL mux_1_out, mux_2_out : STD_LOGIC_VECTOR(3 DOWNTO 0);
+    SIGNAL mux_3_out, mux_4_out : STD_LOGIC_VECTOR(3 DOWNTO 0);
+    SIGNAL mux_5_out, mux_6_out : STD_LOGIC_VECTOR(3 DOWNTO 0);
+    SIGNAL mux_7_out : STD_LOGIC_VECTOR(3 DOWNTO 0);
 
     -- Senales de salida para los selectors:
-    SIGNAL select_1_outX : STD_LOGIC_VECTOR(9 DOWNTO 0);
-    SIGNAL select_1_outY : STD_LOGIC_VECTOR(9 DOWNTO 0);
-    SIGNAL select_2_outX : STD_LOGIC_VECTOR(9 DOWNTO 0);
-    SIGNAL select_2_outY : STD_LOGIC_VECTOR(9 DOWNTO 0);
+    SIGNAL select_1_outX, select_1_outY : STD_LOGIC_VECTOR(9 DOWNTO 0);
+    SIGNAL select_2_outX, select_2_outY : STD_LOGIC_VECTOR(9 DOWNTO 0);
     SIGNAL signal_response : STD_LOGIC_VECTOR(9 DOWNTO 0);
 
     -- Senales de salida para las respuestas finales para cada digito:
-    SIGNAL first_digit_hex : STD_LOGIC_VECTOR(3 DOWNTO 0);
-    SIGNAL first_digit_dec : STD_LOGIC_VECTOR(3 DOWNTO 0);
-    SIGNAL second_digit_hex : STD_LOGIC_VECTOR(3 DOWNTO 0);
-    SIGNAL second_digit_dec : STD_LOGIC_VECTOR(3 DOWNTO 0);
-    SIGNAL third_digit_hex : STD_LOGIC_VECTOR(3 DOWNTO 0);
-    SIGNAL third_digit_dec : STD_LOGIC_VECTOR(3 DOWNTO 0);
+    SIGNAL first_digit_hex, first_digit_dec : STD_LOGIC_VECTOR(3 DOWNTO 0);
+    SIGNAL second_digit_hex, second_digit_dec : STD_LOGIC_VECTOR(3 DOWNTO 0);
+    SIGNAL third_digit_hex, third_digit_dec : STD_LOGIC_VECTOR(3 DOWNTO 0);
 BEGIN
 
     -- Look-Up table de las instrucciones para cada operacion:
     control_instructions <=
         "000110110000000" WHEN n_operation = "00000" ELSE
-        "000110110001000" WHEN n_operation = "00001" ELSE
+        "000110110000100" WHEN n_operation = "00001" ELSE
         "001001110000000" WHEN n_operation = "00010" ELSE
-        "001001110001000" WHEN n_operation = "00011" ELSE
+        "001001110000100" WHEN n_operation = "00011" ELSE
         "001110010000000" WHEN n_operation = "00100" ELSE
-        "001110010001000" WHEN n_operation = "00101" ELSE
-        "101100010001000" WHEN n_operation = "00110" ELSE
-        "011100100001000" WHEN n_operation = "00111" ELSE
-        "100100110001000" WHEN n_operation = "01000" ELSE
+        "001110010000100" WHEN n_operation = "00101" ELSE
+        "101100010000100" WHEN n_operation = "00110" ELSE
+        "011100100000100" WHEN n_operation = "00111" ELSE
+        "100100110000100" WHEN n_operation = "01000" ELSE
         "000000001010000" WHEN n_operation = "01001" ELSE
         "000000000110100" WHEN n_operation = "01010" ELSE
-        "000001010001000" WHEN n_operation = "01011" ELSE
-        "000010100001000" WHEN n_operation = "01100" ELSE
-        "000011110001000" WHEN n_operation = "01101" ELSE
-        "010100000001000" WHEN n_operation = "01110" ELSE
-        "010110100001000" WHEN n_operation = "01111" ELSE
-        "010111110001000" WHEN n_operation = "10000" ELSE
+        "000001010000100" WHEN n_operation = "01011" ELSE
+        "000010100000100" WHEN n_operation = "01100" ELSE
+        "000011110000100" WHEN n_operation = "01101" ELSE
+        "010100000000100" WHEN n_operation = "01110" ELSE
+        "010110100000100" WHEN n_operation = "01111" ELSE
+        "010111110000100" WHEN n_operation = "10000" ELSE
         "000000001110010" WHEN n_operation = "10001" ELSE
-        "000100000010000" WHEN n_operation = "10010" ELSE
-        "001000000010010" WHEN n_operation = "10011" ELSE
-        "000100000010100" WHEN n_operation = "10100" ELSE
-        "000100000010001" WHEN n_operation = "10101" ELSE
-        "010000000010010" WHEN n_operation = "10110" ELSE
+
+        "000000010010000" WHEN n_operation = "10010" ELSE
+        "000000010010010" WHEN n_operation = "10011" ELSE
+        "000000010010100" WHEN n_operation = "10100" ELSE
+        "000000010010001" WHEN n_operation = "10101" ELSE
+        "000001000010010" WHEN n_operation = "10110" ELSE
+
         "000000000100000" WHEN n_operation = "10111" ELSE
         "000000000100100" WHEN n_operation = "11000" ELSE
         "000010111000000" WHEN n_operation = "11001" ELSE
-        "101100000111000" WHEN n_operation = "11010" ELSE
+        "000010110111000" WHEN n_operation = "11010" ELSE
         "000000000000000"; -- Default case
 
     ------------------------------------------------------------
     --                 MUX(4:1): 1,2,3,4,5,6                  --
     ------------------------------------------------------------     
-
     MUX1 : ENTITY WORK.mux4_1_when_else(mux4_1_when_elseArch)
         PORT MAP(
             A => A,
@@ -215,106 +217,19 @@ BEGIN
             OUTPUT => mux_6_out
         );
 
-    ------------------------------------------------------------
-    --                   Multiplicaciones                     --
-    ------------------------------------------------------------
-
-    full_multiplier_1 : ENTITY work.Multiplier(MultiplierArch)
+    MUX7 : ENTITY WORK.mux4_1_when_else(mux4_1_when_elseArch)
         PORT MAP(
-            x => mux_1_out,
-            y => mux_2_out,
-            s => signal_1(7 DOWNTO 0)
-        );
-
-    signal_1(9 DOWNTO 8) <= "00";
-
-    full_multiplier_2 : ENTITY work.Multiplier(MultiplierArch)
-        PORT MAP(
-            x => mux_3_out,
-            y => mux_4_out,
-            s => signal_2(7 DOWNTO 0)
-        );
-
-    signal_2(9 DOWNTO 8) <= "00";
-
-    ------------------------------------------------------------
-    --                   Sumas y restas                       --
-    ------------------------------------------------------------
-
-    full_adder_substractor_1 : ENTITY work.FULL_ADDER_SUBSTRACTOR_10(STRUCT)
-        PORT MAP(
-            OP => control_instructions(3),
-            A => select_2_outX,
-            B => select_2_outY,
-            R => signal_8,
-            COUT => OPEN
-        );
-
-    full_adder_substractor_2 : ENTITY work.FULL_ADDER_SUBSTRACTOR_10(STRUCT)
-        PORT MAP(
-            OP => control_instructions(2),
-            A => select_1_outX,
-            B => select_1_outY,
-            R => signal_7,
-            COUT => OPEN
-        );
-
-    full_adder_substractor_3 : ENTITY work.FULL_ADDER_SUBSTRACTOR_4(STRUCT)
-        PORT MAP(
-            OP => control_instructions(1),
-            A => mux_5_out,
-            B => mux_6_out,
-            R => signal_aux_3,
-            CARRY => signal_cout_3,
-            OVERFLOW => OPEN
-        );
-
-    Sign_Extended_1 : ENTITY work.S_ext(S_ext_Arch)
-        PORT MAP(
-            S => signal_aux_3,
-            C => signal_cout_3,
-            OP => control_instructions(1),
-            R => signal_3
-        );
-
-    full_adder_substractor_4 : ENTITY work.FULL_ADDER_SUBSTRACTOR_4(STRUCT)
-        PORT MAP(
-            OP => control_instructions(0),
-            A => C (3 DOWNTO 0),
-            B => D (3 DOWNTO 0),
-            R => signal_aux_4,
-            CARRY => signal_cout_4,
-            OVERFLOW => OPEN
-        );
-
-    Sign_Extended_2 : ENTITY work.S_ext(S_ext_Arch)
-        PORT MAP(
-            S => signal_aux_4,
-            C => signal_cout_4,
-            OP => control_instructions(0),
-            R => signal_4
-        );
-
-    ------------------------------------------------------------
-    --                Multipliacion por 2                     --
-    ------------------------------------------------------------
-
-    bit_shift_left_1 : ENTITY work.bit_shift_left(bit_shift_left_arch)
-        PORT MAP(
-            X => A (3 DOWNTO 0),
-            S => signal_5
-        );
-
-    bit_shift_left_2 : ENTITY work.bit_shift_left(bit_shift_left_arch)
-        PORT MAP(
-            X => B (3 DOWNTO 0),
-            S => signal_6
+            A => "0000",
+            B => "0001",
+            C => "0010",
+            D => (OTHERS => '0'),
+            sel => B(1 DOWNTO 0),
+            OUTPUT => mux_7_out
         );
 
     ------------------------------------------------------------
     --                   Selectors 1,2,3                      --
     ------------------------------------------------------------ 
-
     select_1 : ENTITY WORK.mux6_2_when_else_1(mux6_2_when_else_1Arch)
         PORT MAP(
             signal1 => signal_1,
@@ -323,6 +238,7 @@ BEGIN
             signal4 => signal_4,
             signal5 => signal_5,
             signal6 => signal_6,
+            signal9 => signal_9,
             sel(2) => control_instructions(6),
             sel(1) => control_instructions(5),
             sel(0) => control_instructions(4),
@@ -347,11 +263,127 @@ BEGIN
             signal7 => signal_7,
             signal1 => signal_1,
             signal8 => signal_8,
+            signal9 => signal_9,
             sel(2) => control_instructions(6),
             sel(1) => control_instructions(5),
             sel(0) => control_instructions(4),
             OUTPUT => signal_response
         );
+    binary_response <= signal_response;
+
+    ------------------------------------------------------------
+    --                   Multiplicaciones                     --
+    ------------------------------------------------------------
+    full_multiplier_1 : ENTITY work.Multiplier(MultiplierArch)
+        PORT MAP(
+            x => mux_1_out,
+            y => mux_2_out,
+            s => signal_1(7 DOWNTO 0)
+        );
+
+    signal_1(9 DOWNTO 8) <= "00";
+    multiplier_response_1 <= signal_1;
+
+    full_multiplier_2 : ENTITY work.Multiplier(MultiplierArch)
+        PORT MAP(
+            x => mux_3_out,
+            y => mux_4_out,
+            s => signal_2(7 DOWNTO 0)
+        );
+
+    signal_2(9 DOWNTO 8) <= "00";
+    multiplier_response_2 <= signal_2;
+
+    ------------------------------------------------------------
+    --                   Sumas y restas                       --
+    ------------------------------------------------------------
+    full_adder_substractor_1 : ENTITY work.FULL_ADDER_SUBSTRACTOR_10(STRUCT)
+        PORT MAP(
+            OP => control_instructions(3),
+            A => select_2_outX,
+            B => select_2_outY,
+            R => signal_8,
+            COUT => OPEN
+        );
+    adder_substractor_response_1 <= signal_8;
+
+    full_adder_substractor_2 : ENTITY work.FULL_ADDER_SUBSTRACTOR_10(STRUCT)
+        PORT MAP(
+            OP => control_instructions(2),
+            A => select_1_outX,
+            B => select_1_outY,
+            R => signal_7,
+            COUT => OPEN
+        );
+    adder_substractor_response_2 <= signal_7;
+
+    full_adder_substractor_3 : ENTITY work.FULL_ADDER_SUBSTRACTOR_4(STRUCT)
+        PORT MAP(
+            OP => control_instructions(1),
+            A => mux_5_out,
+            B => mux_6_out,
+            R => signal_aux_3,
+            CARRY => signal_cout_3,
+            OVERFLOW => OPEN
+        );
+    signal_aux_3_response <= signal_aux_3;
+
+    Sign_Extended_1 : ENTITY work.S_ext(S_ext_Arch)
+        PORT MAP(
+            S => signal_aux_3,
+            C => signal_cout_3,
+            OP => control_instructions(1),
+            R => signal_3
+        );
+    adder_substractor_response_3 <= signal_3;
+
+    full_adder_substractor_4 : ENTITY work.FULL_ADDER_SUBSTRACTOR_4(STRUCT)
+        PORT MAP(
+            OP => control_instructions(0),
+            A => C (3 DOWNTO 0),
+            B => D (3 DOWNTO 0),
+            R => signal_aux_4,
+            CARRY => signal_cout_4,
+            OVERFLOW => OPEN
+        );
+    signal_aux_4_response <= signal_aux_4;
+
+    Sign_Extended_2 : ENTITY work.S_ext(S_ext_Arch)
+        PORT MAP(
+            S => signal_aux_4,
+            C => signal_cout_4,
+            OP => control_instructions(0),
+            R => signal_4
+        );
+    adder_substractor_response_4 <= signal_4;
+
+    ------------------------------------------------------------
+    --                Multipliacion por 2                     --
+    ------------------------------------------------------------
+    bit_shift_left_1 : ENTITY work.bit_shift_left(bit_shift_left_arch)
+        PORT MAP(
+            X => A,
+            S => signal_5
+        );
+    bit_shift_left_response_1 <= signal_5;
+
+    bit_shift_left_2 : ENTITY work.bit_shift_left(bit_shift_left_arch)
+        PORT MAP(
+            X => B,
+            S => signal_6
+        );
+    bit_shift_left_response_2 <= signal_6;
+
+    ------------------------------------------------------------
+    --                Potencia                                --
+    ------------------------------------------------------------
+    power : ENTITY work.power_3cases(no_if_for_arch)
+        PORT MAP(
+            X => A,
+            Y => mux_7_out,
+            S => signal_9
+        );
+    power_response <= signal_9;
 
     ------------------------------------------------------------
     --                Bin to digits                           --

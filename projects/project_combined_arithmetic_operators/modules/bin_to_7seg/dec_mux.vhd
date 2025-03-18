@@ -30,6 +30,7 @@ BEGIN
         "0000010" WHEN "0110", -- 6
         "1111000" WHEN "0111", -- 7
         "0000000" WHEN "1000", -- 8
-        "0010000" WHEN OTHERS; -- 9
+        "1000000" WHEN "1001", -- 9
+        "1000000" WHEN OTHERS; -- 0
 
 END dec_mux_arch;

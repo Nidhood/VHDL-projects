@@ -9,6 +9,7 @@ ENTITY mux6_2_when_else_1 IS
         signal4 : IN STD_LOGIC_VECTOR(9 DOWNTO 0);
         signal5 : IN STD_LOGIC_VECTOR(9 DOWNTO 0);
         signal6 : IN STD_LOGIC_VECTOR(9 DOWNTO 0);
+        signal9 : IN STD_LOGIC_VECTOR(9 DOWNTO 0);
         sel : IN STD_LOGIC_VECTOR(2 DOWNTO 0);
         X : OUT STD_LOGIC_VECTOR(9 DOWNTO 0);
         Y : OUT STD_LOGIC_VECTOR(9 DOWNTO 0)
@@ -24,6 +25,7 @@ BEGIN
         signal3 WHEN sel = "001" ELSE
         signal5 WHEN sel = "010" ELSE
         signal1 WHEN sel = "011" ELSE
+        signal5 WHEN sel = "100" ELSE
         -- FALTA DEFINIR LOS CASOS 10, 11, 18
         "0000000000";
 
@@ -31,6 +33,7 @@ BEGIN
         signal4 WHEN sel = "001" ELSE
         signal6 WHEN sel = "010" ELSE
         signal6 WHEN sel = "011" ELSE
+        signal6 WHEN sel = "100" ELSE
         -- FALTA DEFINIR LOS CASOS 10, 11, 18
         "0000000000";
 

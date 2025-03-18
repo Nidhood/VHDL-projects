@@ -8,17 +8,17 @@ END ENTITY test_full_adder_substractor_4;
 ARCHITECTURE tb OF test_full_adder_substractor_4 IS
 
     -- Señales de prueba para operaciones en 4 bits
-    SIGNAL OP_tb : STD_LOGIC; -- 0 = suma, 1 = resta
+    SIGNAL OP_tb : STD_LOGIC; -- '0' = suma, '1' = resta
     SIGNAL A_tb, B_tb : STD_LOGIC_VECTOR(3 DOWNTO 0);
-    SIGNAL R_tb : STD_LOGIC_VECTOR(3 DOWNTO 0); -- Resultado (4 bits en 2's complement)
-    SIGNAL CARRY_tb : STD_LOGIC; -- Carry (extra, que indica el signo según la operación)
+    SIGNAL R_tb : STD_LOGIC_VECTOR(3 DOWNTO 0); -- Resultado (4 bits, 2's complement)
+    SIGNAL CARRY_tb : STD_LOGIC; -- Carry extra
     SIGNAL OVERFLOW_tb : STD_LOGIC; -- Indicador de overflow
 
     -- Función para convertir un vector de 4 bits (en 2's complement) a entero
-    FUNCTION slv_to_integer(slv : STD_LOGIC_VECTOR) RETURN INTEGER IS
+    FUNCTION to_integer_4(slv : STD_LOGIC_VECTOR(3 DOWNTO 0)) RETURN INTEGER IS
     BEGIN
-        RETURN TO_INTEGER(SIGNED(slv));
-    END slv_to_integer;
+        RETURN to_integer(signed(slv));
+    END to_integer_4;
 
 BEGIN
 
@@ -40,30 +40,50 @@ BEGIN
     --------------------------------------------------------------------
     stim : PROCESS
     BEGIN
-        -- Caso 1: Prueba de suma: 7 + 7 = 14 
-        -- (En 4 bits en 2's complement el rango positivo es de 0 a 7, por lo que 7+7 produce overflow)
+        ----------------------------------------------------------------
+        -- Caso 1: Suma: 3 + 2 = 5
+        ----------------------------------------------------------------
+        OP_tb <= '0';
+        A_tb <= "0011"; -- 3
+        B_tb <= "0010"; -- 2
+        WAIT FOR 40 ns;
+        REPORT "Suma 3+2: R = " & INTEGER'image(to_integer_4(R_tb)) &
+            ", CARRY = " & STD_LOGIC'image(CARRY_tb) &
+            ", OVERFLOW = " & STD_LOGIC'image(OVERFLOW_tb);
+
+        ----------------------------------------------------------------
+        -- Caso 2: Suma: 7 + 7 = (overflow esperado)
+        -- 7 = "0111"; 7+7=14, fuera de rango en 4 bits, se espera R = "1110" (-2) y OVERFLOW = '1'
+        ----------------------------------------------------------------
         OP_tb <= '0';
         A_tb <= "0111"; -- 7
         B_tb <= "0111"; -- 7
         WAIT FOR 40 ns;
+        REPORT "Suma 7+7: R = " & INTEGER'image(to_integer_4(R_tb)) &
+            ", CARRY = " & STD_LOGIC'image(CARRY_tb) &
+            ", OVERFLOW = " & STD_LOGIC'image(OVERFLOW_tb);
 
-        -- Caso 2: Prueba de suma: 10 + 4 = 14
-        -- Nota: En 4 bits, "1010" se interpreta como -6 en 2's complement.
-        -- Se asume que se desea observar el comportamiento, ya que 10 no es representable en 4 bits sin signo.
-        A_tb <= "1010"; -- Representación en 4 bits (10 en decimal no es representable; este valor se interpreta en 2's complement)
-        B_tb <= "0100"; -- 4
-        WAIT FOR 40 ns;
-
-        -- Caso 3: Prueba de resta: 10 - 3 = 7
+        ----------------------------------------------------------------
+        -- Caso 3: Resta: 7 - 2 = 5
+        ----------------------------------------------------------------
         OP_tb <= '1';
-        A_tb <= "1010"; -- Nuevamente, "1010" se usa para la operación (interpretada en complemento a 2 para resta)
-        B_tb <= "0011"; -- 3
+        A_tb <= "0111"; -- 7
+        B_tb <= "0010"; -- 2
         WAIT FOR 40 ns;
+        REPORT "Resta 7-2: R = " & INTEGER'image(to_integer_4(R_tb)) &
+            ", CARRY = " & STD_LOGIC'image(CARRY_tb) &
+            ", OVERFLOW = " & STD_LOGIC'image(OVERFLOW_tb);
 
-        -- Caso 4: Prueba de resta con underflow: 5 - 8 = -3
-        A_tb <= "0101"; -- 5
-        B_tb <= "1000"; -- 8
+        ----------------------------------------------------------------
+        -- Caso 4: Resta: 3 - 5 = -2
+        ----------------------------------------------------------------
+        OP_tb <= '1';
+        A_tb <= "0001"; -- 3
+        B_tb <= "0010"; -- 5
         WAIT FOR 40 ns;
+        REPORT "Resta 3-5: R = " & INTEGER'image(to_integer_4(R_tb)) &
+            ", CARRY = " & STD_LOGIC'image(CARRY_tb) &
+            ", OVERFLOW = " & STD_LOGIC'image(OVERFLOW_tb);
 
         WAIT;
     END PROCESS stim;

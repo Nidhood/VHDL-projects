@@ -18,10 +18,14 @@ BEGIN
 
     X <= signal7 WHEN sel = "000" ELSE
         signal2 WHEN sel = "001" ELSE
+        signal2 WHEN sel = "011" ELSE
+        signal7 WHEN sel = "100" ELSE
         "0000000000";
 
     Y <= signal2 WHEN sel = "000" ELSE
         signal7 WHEN sel = "001" ELSE
+        signal7 WHEN sel = "011" ELSE
+        signal2 WHEN sel = "100" ELSE
         "0000000000";
 
 END mux6_2_when_else_2Arch;
