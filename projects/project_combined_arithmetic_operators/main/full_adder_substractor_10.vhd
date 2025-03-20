@@ -1,15 +1,20 @@
+---------------------------------------------------------------------------------
+--    Description: Full adder/substractor for 10-bit numbers                   --
+--    Authors: Ivan Dario Orozco Ibanez & Jeronimo Rueda                       --
+--    Date: 11/03/2025                                                          --
+---------------------------------------------------------------------------------
 LIBRARY IEEE;
 USE IEEE.STD_LOGIC_1164.ALL;
-
+---------------------------------------------------------------------------------
 ENTITY FULL_ADDER_SUBSTRACTOR_10 IS
     PORT (
-        OP : IN STD_LOGIC; -- 0 = Suma, 1 = Resta
-        A, B : IN STD_LOGIC_VECTOR(9 DOWNTO 0); -- Entradas de 10 bits con signo (MSB = signo)
-        R : OUT STD_LOGIC_VECTOR(9 DOWNTO 0); -- Resultado: 1 bit de signo (MSB) + 9 bits de valor
-        COUT : OUT STD_LOGIC -- Carry, que se usará como signo
+        OP : IN STD_LOGIC;
+        A, B : IN STD_LOGIC_VECTOR(9 DOWNTO 0);
+        R : OUT STD_LOGIC_VECTOR(9 DOWNTO 0);
+        COUT : OUT STD_LOGIC
     );
 END ENTITY FULL_ADDER_SUBSTRACTOR_10;
-
+---------------------------------------------------------------------------------
 ARCHITECTURE STRUCT OF FULL_ADDER_SUBSTRACTOR_10 IS
 
     COMPONENT FULL_ADDER IS
@@ -19,20 +24,18 @@ ARCHITECTURE STRUCT OF FULL_ADDER_SUBSTRACTOR_10 IS
         );
     END COMPONENT;
 
-    SIGNAL C : STD_LOGIC_VECTOR(9 DOWNTO 0); -- Acarreos internos para 10 bits
-    SIGNAL TMP : STD_LOGIC_VECTOR(9 DOWNTO 0); -- Señal para invertir B en caso de resta
-    SIGNAL R_int : STD_LOGIC_VECTOR(9 DOWNTO 0); -- Resultado interno (10 bits)
+    SIGNAL C : STD_LOGIC_VECTOR(9 DOWNTO 0);
+    SIGNAL TMP : STD_LOGIC_VECTOR(9 DOWNTO 0);
+    SIGNAL R_int : STD_LOGIC_VECTOR(9 DOWNTO 0);
 
 BEGIN
 
-    -- Para suma (OP = '0') se usa B directamente;
-    -- para resta (OP = '1') se invierte B utilizando XOR con una máscara de OP repetido 10 veces.
     TMP <= B XOR (OP & OP & OP & OP & OP & OP & OP & OP & OP & OP);
 
     FA0 : FULL_ADDER PORT MAP(
         A => A(0),
         B => TMP(0),
-        Cin => OP, -- En suma: Cin = '0'; en resta: Cin = '1'
+        Cin => OP,
         S => R_int(0),
         Cout => C(0)
     );
@@ -100,12 +103,8 @@ BEGIN
         Cout => C(9)
     );
 
-    -- Se asigna el resultado completo (10 bits) a la salida R,
-    -- donde R(9) es el bit de signo y R(8 DOWNTO 0) la parte numérica.
     R <= R_int;
 
-    -- El puerto COUT se utiliza para reflejar el acarreo final.
-    -- Para suma se usa directamente C(9); para resta se invierte C(9) para reflejar la convención de borrow en complemento a 2.
     COUT <= C(9) WHEN OP = '0' ELSE
         NOT C(9);
 

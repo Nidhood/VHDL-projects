@@ -6,14 +6,14 @@
 LIBRARY IEEE;
 USE IEEE.STD_LOGIC_1164.ALL;
 ---------------------------------------------------------------------------------
-ENTITY hex_mux IS
+ENTITY hex_mux_c IS
 
     PORT (
         x : IN STD_LOGIC_VECTOR(3 DOWNTO 0);
         sseg : OUT STD_LOGIC_VECTOR(6 DOWNTO 0));
-END ENTITY hex_mux;
-
-ARCHITECTURE hex_mux_arch OF hex_mux IS
+END ENTITY hex_mux_c;
+---------------------------------------------------------------------------------
+ARCHITECTURE hex_mux_arch OF hex_mux_c IS
 
 BEGIN
 

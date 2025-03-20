@@ -1,6 +1,11 @@
+---------------------------------------------------------------------------------
+--    Description: Multiplier for 4-bit numbers                                --
+--    Author: David Villalobos                                                 --
+--    Date: 11/03/2025                                                         --
+---------------------------------------------------------------------------------
 LIBRARY IEEE;
 USE IEEE.STD_LOGIC_1164.ALL;
-
+---------------------------------------------------------------------------------
 ENTITY Multiplier IS
     PORT (
         x : IN STD_LOGIC_VECTOR(3 DOWNTO 0);
@@ -8,18 +13,16 @@ ENTITY Multiplier IS
         s : OUT STD_LOGIC_VECTOR(7 DOWNTO 0)
     );
 END ENTITY Multiplier;
-
+---------------------------------------------------------------------------------
 ARCHITECTURE MultiplierArch OF Multiplier IS
 
     SIGNAL Carry1, Carry2, Carry3, Carry4, Carry5, Carry6, Carry7, Carry8, Carry9, Carry10, Carry11 : STD_LOGIC;
     SIGNAL Temp1, Temp2, Temp3, Temp4, Temp5, Temp6 : STD_LOGIC;
 
-    -- SeÃƒÂ±ales intermedias para almacenar los productos parciales
     SIGNAL P0, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 : STD_LOGIC;
 
 BEGIN
 
-    -- AsignaciÃƒÂ³n de productos parciales
     P0 <= x(0) AND y(0);
     P1 <= x(1) AND y(0);
     P2 <= x(0) AND y(1);

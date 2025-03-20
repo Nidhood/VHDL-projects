@@ -1,10 +1,10 @@
+--------------------------------------------------------------------------------- 
+--    Descripcion: Shifts the input one times to the left, to multiply by 2.   --
+--    Author: Ivan Dario Orozco Ibanez                                         --
+--    Date: 11/03/2025                                                         --
+---------------------------------------------------------------------------------
 LIBRARY IEEE;
 USE IEEE.STD_LOGIC_1164.ALL;
----------------------------------------------------------------------------------
---                                                                             -- 
---    Two shifter: Shifts the input one times to the left, to multiply by 2.   --
---    Author: Ivan Dario Orozco Ibanez                                         --
---                                                                             --
 ---------------------------------------------------------------------------------
 ENTITY bit_shift_left IS
     PORT (

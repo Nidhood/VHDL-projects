@@ -1,13 +1,18 @@
+---------------------------------------------------------------------------------
+--    Description: Calculates the two's complement of a 10-bit number.         --
+--    Author: Ivan Dario Orozco Ibanez                                         --
+--    Date: 11/03/2025                                                         --
+---------------------------------------------------------------------------------
 LIBRARY IEEE;
 USE IEEE.STD_LOGIC_1164.ALL;
-
+---------------------------------------------------------------------------------
 ENTITY complement2_10bits IS
     PORT (
         X : IN STD_LOGIC_VECTOR(9 DOWNTO 0); -- Entrada
         S : OUT STD_LOGIC_VECTOR(9 DOWNTO 0) -- -(X) en 2’s complement
     );
 END ENTITY complement2_10bits;
-
+---------------------------------------------------------------------------------
 ARCHITECTURE ripple_adder OF complement2_10bits IS
 
     COMPONENT Full_Adder IS
@@ -19,30 +24,21 @@ ARCHITECTURE ripple_adder OF complement2_10bits IS
 
     SIGNAL notX : STD_LOGIC_VECTOR(9 DOWNTO 0);
     SIGNAL sum : STD_LOGIC_VECTOR(9 DOWNTO 0);
-    SIGNAL c : STD_LOGIC_VECTOR(9 DOWNTO 0); -- Acarreos internos
+    SIGNAL c : STD_LOGIC_VECTOR(9 DOWNTO 0);
 
 BEGIN
 
-    ----------------------------------------------------------------
-    -- 1) Invertir bits de X:  notX <= NOT X
-    ----------------------------------------------------------------
     notX <= NOT X;
 
-    ----------------------------------------------------------------
-    -- 2) Suma bit 0: (NOT X)(0) + '1' + '0'
-    ----------------------------------------------------------------
     FA0 : Full_Adder
     PORT MAP(
         A => notX(0),
-        B => '1', -- Se agrega el +1 en el bit 0
+        B => '1',
         Cin => '0',
         S => sum(0),
         Cout => c(0)
     );
 
-    ----------------------------------------------------------------
-    -- 3) Suma bits 1..9: (NOT X)(i) + '0' + carry anterior
-    ----------------------------------------------------------------
     FA1 : Full_Adder
     PORT MAP(
         A => notX(1),
@@ -124,9 +120,6 @@ BEGIN
         Cout => c(9)
     );
 
-    ----------------------------------------------------------------
-    -- 4) Asignar la salida final
-    ----------------------------------------------------------------
     S <= sum;
 
 END ARCHITECTURE ripple_adder;

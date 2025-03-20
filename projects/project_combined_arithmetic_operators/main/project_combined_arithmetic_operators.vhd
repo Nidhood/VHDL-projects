@@ -1,9 +1,7 @@
 ------------------------------------------------------------------------------------------
---                                                                                      --
---                              Jeronimo Rueda                                          --
+--  Autors:                     Jeronimo Rueda &                                        --
 --                              Andres David Villalobos Torres                          --
 --                              Ivan Dario Orozco Ibanez                                --
---                                                                                      --
 --  Project:                   project_combined_arithmetic_operators                    --                                                        --
 --  Date:                      16/03/2025                                               --
 ------------------------------------------------------------------------------------------
@@ -63,7 +61,10 @@ ENTITY project_combined_arithmetic_operators IS
         number_A_sseg : OUT STD_LOGIC_VECTOR(6 DOWNTO 0); -- Numero A en 7 segmentos
         number_B_sseg : OUT STD_LOGIC_VECTOR(6 DOWNTO 0); -- Numero B en 7 segmentos
         number_C_sseg : OUT STD_LOGIC_VECTOR(6 DOWNTO 0); -- Numero C en 7 segmentos
-        number_D_sseg : OUT STD_LOGIC_VECTOR(6 DOWNTO 0) -- Numero D en 7 segmentos
+        number_D_sseg : OUT STD_LOGIC_VECTOR(6 DOWNTO 0); -- Numero D en 7 segmentos
+
+        -- Pruebas:
+        binary_response : OUT STD_LOGIC_VECTOR(9 DOWNTO 0)
     );
 
 END ENTITY project_combined_arithmetic_operators;
@@ -148,7 +149,6 @@ BEGIN
     ------------------------------------------------------------
     --             Completar C y D a 4 bits:                  --
     ------------------------------------------------------------  
-
     C_aux <= "0" & C;
     D_aux <= "0" & D;
 
@@ -278,6 +278,8 @@ BEGIN
             OUTPUT => signal_response
         );
 
+    binary_response <= signal_response;
+
     A_aux_10 <= "000000" & A;
     select_4 : ENTITY WORK.mux2_1_when_else_4(mux2_1_when_else_4Arch)
         PORT MAP(
@@ -384,7 +386,7 @@ BEGIN
     ------------------------------------------------------------
     --                       Potencia                         --
     ------------------------------------------------------------
-    power : ENTITY work.power_3cases(no_if_for_arch)
+    power : ENTITY work.power(power_arch)
         PORT MAP(
             X => A,
             Y => mux_7_out,
@@ -394,7 +396,6 @@ BEGIN
     ------------------------------------------------------------
     --                    Complemento a 2                     --
     ------------------------------------------------------------
-
     two_complement : ENTITY work.complement2_10bits(ripple_adder)
         PORT MAP(
             X => signal_12,
@@ -415,29 +416,29 @@ BEGIN
             H3 => third_digit_hex,
             S => sseg_1
         );
+
     ------------------------------------------------------------
     --                Bin to 7 Segment numbers                --
     ------------------------------------------------------------
-
-    number_A : ENTITY work.hex_mux(hex_mux_arch)
+    number_A : ENTITY work.hex_mux_c(hex_mux_arch)
         PORT MAP(
             x => A,
             sseg => number_A_sseg
         );
 
-    number_B : ENTITY work.hex_mux(hex_mux_arch)
+    number_B : ENTITY work.hex_mux_c(hex_mux_arch)
         PORT MAP(
             x => B,
             sseg => number_B_sseg
         );
 
-    number_C : ENTITY work.hex_mux(hex_mux_arch)
+    number_C : ENTITY work.hex_mux_c(hex_mux_arch)
         PORT MAP(
             x => C_aux,
             sseg => number_C_sseg
         );
 
-    number_D : ENTITY work.hex_mux(hex_mux_arch)
+    number_D : ENTITY work.hex_mux_c(hex_mux_arch)
         PORT MAP(
             x => D_aux,
             sseg => number_D_sseg

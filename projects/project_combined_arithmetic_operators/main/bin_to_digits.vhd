@@ -1,11 +1,12 @@
-
+--------------------------------------------------------------------------------- 
+--    Descripcion: Converts a 10-bit binary number to 3 4-bit binary numbers.  --
+--    Author: Jeronimo Rueda                                                   --
+--    Date: 11/03/2025                                                         --
+---------------------------------------------------------------------------------
 LIBRARY IEEE;
 USE IEEE.STD_LOGIC_1164.ALL;
 USE IEEE.NUMERIC_STD.ALL;
-
--- =====================================================
---                  BIN_TO_DIGITS 
--- =====================================================
+---------------------------------------------------------------------------------
 ENTITY bin_to_digits IS
     PORT (
         R : IN STD_LOGIC_VECTOR(9 DOWNTO 0);
@@ -21,7 +22,6 @@ END ENTITY bin_to_digits;
 
 ARCHITECTURE bin_to_digits_Arch OF bin_to_digits IS
 
-    -- SeÃƒÂ±ales intermedias para almacenar los productos parciales
     SIGNAL P0, P1, P2, P3, P4, P5, P6, P7, P8, P9 : STD_LOGIC_VECTOR(9 DOWNTO 0);
 
     SIGNAL Sum1, Sum2, Sum3, Sum4, Sum5, Sum6, Sum7, Sum8, Sum9, Sum10 : STD_LOGIC_VECTOR(3 DOWNTO 0);
@@ -50,48 +50,37 @@ BEGIN
     H2 <= R(7 DOWNTO 4);
     H3 <= R(3 DOWNTO 0);
 
-    -- ==========================================================================================================
-    --                                            BIN_TO_DEC_DIGITS 
-    -- ==========================================================================================================
-
-    -- =====================================================
-    --                  CENTENAS
-    -- =====================================================
     Comp1 : ENTITY WORK.comp_bin2dig(comp_bin2dig_Arch)
         PORT MAP(
-            Ans => Rf, -- Resultado 0011111010 250 
-            Comp => "0011001000", -- Comparación 200
-            Val_out => P0, -- Valor que continua en operacion
-            Val_sum => Sum1, -- Valor que se suma para centenas
-            GT_out => GT1 -- Bit Greaater Than 
+            Ans => Rf,
+            Comp => "0011001000",
+            Val_out => P0,
+            Val_sum => Sum1,
+            GT_out => GT1
         );
 
     Comp2 : ENTITY WORK.comp_bin2dig(comp_bin2dig_Arch)
         PORT MAP(
-            Ans => P0, -- Resultado 
-            Comp => "0001100100", -- Comparación 100
-            Val_out => P1, -- Valor que continua en operacion
-            Val_sum => Sum2, -- Valor que se suma para centenas
-            GT_out => GT2 -- Bit Greater Than 
+            Ans => P0,
+            Comp => "0001100100",
+            Val_out => P1,
+            Val_sum => Sum2,
+            GT_out => GT2
         );
     Sum1e <= "000000" & Sum1;
     Sum2e <= "000000" & Sum2;
 
-    -- SUMA CENTENAS
-
     Sumador1 : ENTITY WORK.full_adder_substractor_10(STRUCT)
         PORT MAP(
-            OP => '0', -- Operación de Suma
-            A => Sum1e, -- Entrada de 10 bits
-            B => Sum2e, -- Entrada de 10 bits
-            R => Cent, -- Resultado de la resta (10 bits)
-            COUT => Carry1 -- Bit de acarreo
+            OP => '0',
+            A => Sum1e,
+            B => Sum2e,
+            R => Cent,
+            COUT => Carry1
         );
 
     B1 <= Cent(3 DOWNTO 0);
-    -- =====================================================
-    --                  DECENAS
-    -- =====================================================
+
     Comp3 : ENTITY WORK.comp_bin2dig(comp_bin2dig_Arch)
         PORT MAP(
             Ans => P1, -- Resultado 

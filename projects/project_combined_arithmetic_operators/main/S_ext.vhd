@@ -1,16 +1,21 @@
+---------------------------------------------------------------------------------
+--    Description: N-bit greater than comparator with sign                     --
+--    Author: Jeronimo Rueda                                                   --
+--    Date: 11/03/2025                                                         --
+---------------------------------------------------------------------------------
 LIBRARY IEEE;
 USE IEEE.STD_LOGIC_1164.ALL;
 USE IEEE.NUMERIC_STD.ALL;
-
+---------------------------------------------------------------------------------
 ENTITY S_ext IS
     PORT (
-        S : IN STD_LOGIC_VECTOR(3 DOWNTO 0); -- Resultado de 4 bits
-        C : IN STD_LOGIC; -- Carry (no se utiliza para la extensión)
-        OP : IN STD_LOGIC; -- 0 = Suma, 1 = Resta
-        R : OUT STD_LOGIC_VECTOR(9 DOWNTO 0) -- Salida extendida a 10 bits
+        S : IN STD_LOGIC_VECTOR(3 DOWNTO 0);
+        C : IN STD_LOGIC;
+        OP : IN STD_LOGIC;
+        R : OUT STD_LOGIC_VECTOR(9 DOWNTO 0)
     );
 END S_ext;
-
+---------------------------------------------------------------------------------
 ARCHITECTURE S_ext_Arch OF S_ext IS
     CONSTANT ZERO6 : STD_LOGIC_VECTOR(5 DOWNTO 0) := "000000";
     CONSTANT ONE6 : STD_LOGIC_VECTOR(5 DOWNTO 0) := "111111";

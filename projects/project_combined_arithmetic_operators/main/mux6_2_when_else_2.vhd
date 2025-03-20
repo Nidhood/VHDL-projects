@@ -1,6 +1,11 @@
+---------------------------------------------------------------------------------
+--    Description: Mux 6 to 2 with 4-bit select using when else                --
+--    Author: David Villalobos                                                 --
+--    Date: 11/03/2025                                                         --
+---------------------------------------------------------------------------------
 LIBRARY IEEE;
 USE IEEE.STD_LOGIC_1164.ALL;
-
+---------------------------------------------------------------------------------
 ENTITY mux6_2_when_else_2 IS
     PORT (
         signal2 : IN STD_LOGIC_VECTOR(9 DOWNTO 0);
@@ -29,12 +34,3 @@ BEGIN
         "0000000000";
 
 END mux6_2_when_else_2Arch;
-
-------------------------------------------------------------------------------------------
---BlockN: ENTITY WORK.mux6_2_when_else_2(mux6_2_when_else_2Arch)
---PORT MAP   (signal2 => SLV,
---            signal7 => SLV,
---            sel => SLV,
---            X => SLV,
---				  Y => SLV
---           );

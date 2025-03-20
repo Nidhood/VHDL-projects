@@ -1,3 +1,8 @@
+---------------------------------------------------------------------------------
+--    Description: Testbench for project_combined_arithmetic_operators         --
+--    Author: Ivan Dario Orozco Ibanez                                         --
+--    Date: 11/03/2025                                                         --
+---------------------------------------------------------------------------------
 LIBRARY IEEE;
 USE IEEE.STD_LOGIC_1164.ALL;
 USE IEEE.NUMERIC_STD.ALL;
@@ -7,9 +12,6 @@ END tb_project_combined_arithmetic_operators;
 
 ARCHITECTURE behavior OF tb_project_combined_arithmetic_operators IS
 
-    --------------------------------------------------------------------
-    -- Declaración del componente a testear
-    --------------------------------------------------------------------
     COMPONENT project_combined_arithmetic_operators IS
         PORT (
             n_operation : IN STD_LOGIC_VECTOR(4 DOWNTO 0);
@@ -21,13 +23,11 @@ ARCHITECTURE behavior OF tb_project_combined_arithmetic_operators IS
             number_A_sseg : OUT STD_LOGIC_VECTOR(6 DOWNTO 0);
             number_B_sseg : OUT STD_LOGIC_VECTOR(6 DOWNTO 0);
             number_C_sseg : OUT STD_LOGIC_VECTOR(6 DOWNTO 0);
-            number_D_sseg : OUT STD_LOGIC_VECTOR(6 DOWNTO 0)
+            number_D_sseg : OUT STD_LOGIC_VECTOR(6 DOWNTO 0);
+            binary_response : OUT STD_LOGIC_VECTOR(9 DOWNTO 0)
         );
     END COMPONENT;
 
-    --------------------------------------------------------------------
-    -- Señales de interconexión
-    --------------------------------------------------------------------
     SIGNAL n_operation : STD_LOGIC_VECTOR(4 DOWNTO 0) := (OTHERS => '0');
     SIGNAL select_dec_or_hex : STD_LOGIC := '0';
     SIGNAL A, B : STD_LOGIC_VECTOR(3 DOWNTO 0) := (OTHERS => '0');
@@ -38,11 +38,9 @@ ARCHITECTURE behavior OF tb_project_combined_arithmetic_operators IS
     SIGNAL number_B_sseg : STD_LOGIC_VECTOR(6 DOWNTO 0);
     SIGNAL number_C_sseg : STD_LOGIC_VECTOR(6 DOWNTO 0);
     SIGNAL number_D_sseg : STD_LOGIC_VECTOR(6 DOWNTO 0);
+    SIGNAL binary_response : STD_LOGIC_VECTOR(9 DOWNTO 0);
 BEGIN
 
-    --------------------------------------------------------------------
-    -- Instanciación de la entidad a testear (UUT)
-    --------------------------------------------------------------------
     UUT : project_combined_arithmetic_operators
     PORT MAP(
         n_operation => n_operation,
@@ -58,21 +56,16 @@ BEGIN
         number_A_sseg => number_A_sseg,
         number_B_sseg => number_B_sseg,
         number_C_sseg => number_C_sseg,
-        number_D_sseg => number_D_sseg
+        number_D_sseg => number_D_sseg,
+        binary_response => binary_response
     );
 
-    --------------------------------------------------------------------
-    -- Proceso de estímulo
-    --------------------------------------------------------------------
     stim : PROCESS
     BEGIN
-        ----------------------------------------------------------------
-        -- Ajustar valores de A, B, C, D y n_operation en secuencia
-        ----------------------------------------------------------------
 
         -- Fijamos A=1, B=2, C=3, D=4
-        A <= "0101"; -- 1
-        B <= "0001"; -- 2
+        A <= "0001"; -- 1
+        B <= "0010"; -- 2
         C <= "011"; -- 3 en 3 bits
         D <= "100"; -- 4 en 3 bits
         select_dec_or_hex <= '0'; -- salida en decimal

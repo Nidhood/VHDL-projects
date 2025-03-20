@@ -1,6 +1,11 @@
+---------------------------------------------------------------------------------
+--    Description: Mux 2 to 1 with 4-bit select using when else                --
+--    Author: Ivan Dario Orozco Ibanez                                         --
+--    Date: 11/03/2025                                                         --
+---------------------------------------------------------------------------------
 LIBRARY IEEE;
 USE IEEE.STD_LOGIC_1164.ALL;
-
+---------------------------------------------------------------------------------
 ENTITY mux2_1_when_else_4 IS
     PORT (
         signal9 : IN STD_LOGIC_VECTOR(9 DOWNTO 0);
@@ -9,7 +14,7 @@ ENTITY mux2_1_when_else_4 IS
         OUTPUT : OUT STD_LOGIC_VECTOR(9 DOWNTO 0)
     );
 END ENTITY mux2_1_when_else_4;
-
+---------------------------------------------------------------------------------
 ARCHITECTURE mux2_1_when_else_4Arch OF mux2_1_when_else_4 IS
 BEGIN
 

@@ -1,6 +1,11 @@
+---------------------------------------------------------------------------------
+--    Description: Mux 4 to 1 with 4-bit select using when else                --
+--    Author: David Villalobos                                                 --
+--    Date: 11/03/2025                                                         --
+---------------------------------------------------------------------------------
 LIBRARY IEEE;
 USE IEEE.STD_LOGIC_1164.ALL;
-
+---------------------------------------------------------------------------------
 ENTITY mux4_1_when_else IS
     PORT (
         A : IN STD_LOGIC_VECTOR(3 DOWNTO 0);
