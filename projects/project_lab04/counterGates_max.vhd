@@ -41,7 +41,7 @@ BEGIN
     rst_internal <= rst OR eq; -- combinación de reset externo con reset por igualdad
 
     -- Comparador: si q_internal = max_val => eq = '1'
-    eq_comp : ENTITY work.nBitEquality
+    eq_comp : ENTITY work.FourBitEquality(FourBitEquality_Arch)
         GENERIC MAP(MAX_WIDTH => 4)
         PORT MAP(
             x => q_internal,
