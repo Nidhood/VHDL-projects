@@ -17,26 +17,26 @@ BEGIN
     --=========================================
     comp0 : ENTITY work.oneBitEquality
         PORT MAP(
-            input_0 => x(0),
-            input_1 => y(0),
+            In0 => x(0),
+            In1 => y(0),
             eq => eqs(0));
 
     comp1 : ENTITY work.oneBitEquality
         PORT MAP(
-            input_0 => x(1),
-            input_1 => y(1),
+            In0 => x(1),
+            In1 => y(1),
             eq => eqs(1));
 
     comp2 : ENTITY work.oneBitEquality
         PORT MAP(
-            input_0 => x(2),
-            input_1 => y(2),
+            In0 => x(2),
+            In1 => y(2),
             eq => eqs(2));
 
     comp3 : ENTITY work.oneBitEquality
         PORT MAP(
-            input_0 => x(3),
-            input_1 => y(3),
+            In0 => x(3),
+            In1 => y(3),
             eq => eqs(3));
 
     WITH eqs SELECT
