@@ -1,7 +1,7 @@
 LIBRARY IEEE;
 USE IEEE.STD_LOGIC_1164.ALL;
 -------------------------------
-ENTITY counterGates IS
+ENTITY counterGates_inv IS
     PORT (
         clk : IN STD_LOGIC;
         rst : IN STD_LOGIC;
@@ -9,9 +9,9 @@ ENTITY counterGates IS
         q : OUT STD_LOGIC_VECTOR(3 DOWNTO 0);
         s : OUT STD_LOGIC_VECTOR(6 DOWNTO 0) -- salida a display 7 segmentos
     );
-END counterGates;
+END counterGates_inv;
 -------------------------------
-ARCHITECTURE gateLevel OF counterGates IS
+ARCHITECTURE gateLevel OF counterGates_inv IS
     SIGNAL q0 : STD_LOGIC;
     SIGNAL q1 : STD_LOGIC;
     SIGNAL q2 : STD_LOGIC;
@@ -26,7 +26,7 @@ ARCHITECTURE gateLevel OF counterGates IS
     SIGNAL ena3 : STD_LOGIC;
 
     SIGNAL q_internal : STD_LOGIC_VECTOR(3 DOWNTO 0);
-    SIGNAL q_inv : STD_LOGIC_VECTOR(3 DOWNTO 0);
+    SIGNAL q_neg : STD_LOGIC_VECTOR(3 DOWNTO 0);
 
 BEGIN
 
@@ -42,8 +42,7 @@ BEGIN
 
     -- Output concatenation
     q_internal <= q3 & q2 & q1 & q0;
-    q <= q_internal;
-
+    q <= q_neg;
     -- DFF instantiation
     bit0 : ENTITY work.my_dff
         PORT MAP(
@@ -78,7 +77,6 @@ BEGIN
             q => q3);
 
     q_neg <= NOT q_internal;
-
     -- Instancia del codificador a display de 7 segmentos
     sseg_inst : ENTITY work.bin_to_7seg
         PORT MAP(
