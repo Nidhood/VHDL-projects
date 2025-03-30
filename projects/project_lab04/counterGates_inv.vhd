@@ -43,6 +43,7 @@ BEGIN
     -- Output concatenation
     q_internal <= q3 & q2 & q1 & q0;
     q <= q_neg;
+
     -- DFF instantiation
     bit0 : ENTITY work.my_dff
         PORT MAP(
@@ -77,6 +78,7 @@ BEGIN
             q => q3);
 
     q_neg <= NOT q_internal;
+
     -- Instancia del codificador a display de 7 segmentos
     sseg_inst : ENTITY work.bin_to_7seg
         PORT MAP(

@@ -1,7 +1,7 @@
 LIBRARY IEEE;
 USE IEEE.STD_LOGIC_1164.ALL;
 
-ENTITY counterGates IS
+ENTITY counterGates_max IS
     PORT (
         clk : IN STD_LOGIC;
         rst : IN STD_LOGIC;
@@ -10,9 +10,9 @@ ENTITY counterGates IS
         q : OUT STD_LOGIC_VECTOR(3 DOWNTO 0);
         s : OUT STD_LOGIC_VECTOR(6 DOWNTO 0) -- salida a display 7 segmentos
     );
-END counterGates;
+END counterGates_max;
 
-ARCHITECTURE gateLevel OF counterGates IS
+ARCHITECTURE gateLevel OF counterGates_max IS
     SIGNAL q0, q1, q2, q3 : STD_LOGIC;
     SIGNAL d0, d1, d2, d3 : STD_LOGIC;
     SIGNAL ena2, ena3 : STD_LOGIC;
@@ -23,26 +23,25 @@ ARCHITECTURE gateLevel OF counterGates IS
 
 BEGIN
 
-    -- Negación de las salidas para formar las entradas D
+    -- Negacion de las salidas para formar las entradas D
     d0 <= NOT(q0);
     d1 <= NOT(q1);
     d2 <= NOT(q2);
     d3 <= NOT(q3);
 
-    -- Lógica de habilitación
+    -- Logica de habilitacion
     ena2 <= q1 AND q0;
     ena3 <= q2 AND q1 AND q0;
 
-    -- Construcción del vector de salida
+    -- Construccion del vector de salida
     q_internal <= q3 & q2 & q1 & q0;
     q <= q_internal;
 
-    -- Reset interno cuando el conteo alcanza el valor máximo
-    rst_internal <= rst OR eq; -- combinación de reset externo con reset por igualdad
+    -- Reset interno cuando el conteo alcanza el valor maximo
+    rst_internal <= rst OR eq; -- combinacion de reset externo con reset por igualdad
 
     -- Comparador: si q_internal = max_val => eq = '1'
     eq_comp : ENTITY work.FourBitEquality(FourBitEquality_Arch)
-        GENERIC MAP(MAX_WIDTH => 4)
         PORT MAP(
             x => q_internal,
             y => max_val,
@@ -62,7 +61,7 @@ BEGIN
     bit3 : ENTITY work.my_dff
         PORT MAP(clk => clk, rst => rst_internal, ena => ena3, d => d3, q => q3);
 
-    -- Negación para el display
+    -- Negacion para el display
     q_neg <= NOT q_internal;
 
     -- Display de 7 segmentos
