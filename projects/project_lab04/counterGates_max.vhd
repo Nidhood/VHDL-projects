@@ -1,14 +1,16 @@
 LIBRARY IEEE;
 USE IEEE.STD_LOGIC_1164.ALL;
+USE IEEE.NUMERIC_STD.ALL;
 
 ENTITY counterGates_max IS
     PORT (
         clk : IN STD_LOGIC;
         rst : IN STD_LOGIC;
         ena : IN STD_LOGIC;
-        max_val : IN STD_LOGIC_VECTOR(3 DOWNTO 0); -- nuevo puerto
+        max_val : IN STD_LOGIC_VECTOR(3 DOWNTO 0);
+        n : IN STD_LOGIC; -- '0' = incremento, '1' = decremento (invertido en display)
         q : OUT STD_LOGIC_VECTOR(3 DOWNTO 0);
-        s : OUT STD_LOGIC_VECTOR(6 DOWNTO 0) -- salida a display 7 segmentos
+        s : OUT STD_LOGIC_VECTOR(6 DOWNTO 0)
     );
 END counterGates_max;
 
@@ -18,37 +20,59 @@ ARCHITECTURE gateLevel OF counterGates_max IS
     SIGNAL ena2, ena3 : STD_LOGIC;
     SIGNAL q_internal : STD_LOGIC_VECTOR(3 DOWNTO 0);
     SIGNAL q_neg : STD_LOGIC_VECTOR(3 DOWNTO 0);
-    SIGNAL eq : STD_LOGIC; -- salida del comparador
-    SIGNAL rst_internal : STD_LOGIC; -- reset generado internamente
-
+    SIGNAL sseg_data : STD_LOGIC_VECTOR(3 DOWNTO 0);
+    SIGNAL eq, eq_d : STD_LOGIC := '0';
+    SIGNAL rst_internal : STD_LOGIC;
+    SIGNAL max_int : STD_LOGIC_VECTOR(3 DOWNTO 0);
 BEGIN
 
-    -- Negacion de las salidas para formar las entradas D
+    -- Entradas D de los FF tipo T
     d0 <= NOT(q0);
     d1 <= NOT(q1);
     d2 <= NOT(q2);
     d3 <= NOT(q3);
 
-    -- Logica de habilitacion
+    -- Habilitaciones
     ena2 <= q1 AND q0;
     ena3 <= q2 AND q1 AND q0;
 
-    -- Construccion del vector de salida
+    -- Construcción de salida
     q_internal <= q3 & q2 & q1 & q0;
     q <= q_internal;
 
-    -- Reset interno cuando el conteo alcanza el valor maximo
-    rst_internal <= rst OR eq; -- combinacion de reset externo con reset por igualdad
+    -- Prevenir que max_val sea 0000
+    PROCESS (max_val)
+    BEGIN
+        IF max_val = "0000" THEN
+            max_int <= "0001"; -- evita bloqueo
+        ELSE
+            -- Inversión de bits si switches están al revés (SW0 = MSB)
+            max_int(3) <= max_val(0);
+            max_int(2) <= max_val(1);
+            max_int(1) <= max_val(2);
+            max_int(0) <= max_val(3);
+        END IF;
+    END PROCESS;
 
-    -- Comparador: si q_internal = max_val => eq = '1'
-    eq_comp : ENTITY work.FourBitEquality(FourBitEquality_Arch)
+    -- Comparación directa con max_int
+    comparacion : ENTITY work.FourBitEquality(FourBitEquality_Arch)
         PORT MAP(
             x => q_internal,
-            y => max_val,
+            y => max_int,
             eq => eq
         );
 
-    -- Flip-flops
+    -- Retardo de un ciclo para permitir visualizar el máximo
+    PROCESS (clk)
+    BEGIN
+        IF rising_edge(clk) THEN
+            eq_d <= eq;
+        END IF;
+    END PROCESS;
+
+    rst_internal <= rst OR eq_d;
+
+    -- Flip-flops tipo T usando D flip-flops
     bit0 : ENTITY work.my_dff
         PORT MAP(clk => clk, rst => rst_internal, ena => ena, d => d0, q => q0);
 
@@ -61,11 +85,21 @@ BEGIN
     bit3 : ENTITY work.my_dff
         PORT MAP(clk => clk, rst => rst_internal, ena => ena3, d => d3, q => q3);
 
-    -- Negacion para el display
+    -- Conteo negado para visualización decreciente
     q_neg <= NOT q_internal;
+
+    -- Multiplexor: escoge entre conteo normal o invertido para el display
+    PROCESS (q_internal, q_neg, n)
+    BEGIN
+        IF n = '1' THEN
+            sseg_data <= q_neg; -- modo decremental
+        ELSE
+            sseg_data <= q_internal; -- modo incremental
+        END IF;
+    END PROCESS;
 
     -- Display de 7 segmentos
     sseg_inst : ENTITY work.bin_to_7seg
-        PORT MAP(x => q_internal, sseg => s);
+        PORT MAP(x => sseg_data, sseg => s);
 
 END ARCHITECTURE;
