@@ -13,6 +13,8 @@ ENTITY fifo IS
         wr : IN STD_LOGIC;
         w_data : IN STD_LOGIC_VECTOR(DATA_WIDTH - 1 DOWNTO 0);
         r_data : OUT STD_LOGIC_VECTOR(DATA_WIDTH - 1 DOWNTO 0);
+        w_addr : OUT STD_LOGIC_VECTOR(ADDR_WIDTH - 1 DOWNTO 0);
+        r_addr : OUT STD_LOGIC_VECTOR(ADDR_WIDTH - 1 DOWNTO 0);
         empty : OUT STD_LOGIC;
         full : OUT STD_LOGIC;
         w_addr_ss : OUT STD_LOGIC_VECTOR(6 DOWNTO 0);
@@ -47,6 +49,8 @@ BEGIN
             w_addr => w_addr_s,
             r_addr => r_addr_s
         );
+    w_addr <= w_addr_s;
+    r_addr <= r_addr_s;
 
     -- instantiate register file
     reg_file_unit : ENTITY work.register_file

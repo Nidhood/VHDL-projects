@@ -18,12 +18,14 @@ ENTITY fifo_ctrl IS
 END ENTITY;
 
 ARCHITECTURE arch OF fifo_ctrl IS
+    TYPE State IS (Idle, escr, Lect, RdRw);
     SIGNAL w_ptr_reg, w_ptr_next, w_ptr_succ : STD_LOGIC_VECTOR(ADDR_WIDTH - 1 DOWNTO 0);
     SIGNAL r_ptr_reg, r_ptr_next, r_ptr_succ : STD_LOGIC_VECTOR(ADDR_WIDTH - 1 DOWNTO 0);
     SIGNAL full_reg, full_next : STD_LOGIC;
     SIGNAL empty_reg, empty_next : STD_LOGIC;
-    SIGNAL w_op : STD_LOGIC_VECTOR(1 DOWNTO 0);
-    SIGNAL wr_en : STD_LOGIC;
+    SIGNAL w_op : State;
+
+    SIGNAL Temp : STD_LOGIC_VECTOR(1 DOWNTO 0);
 BEGIN
     -- Registro de los punteros de lectura y escritura
     PROCESS (clk, reset)
@@ -45,21 +47,26 @@ BEGIN
     r_ptr_succ <= STD_LOGIC_VECTOR(unsigned(r_ptr_reg) + 1);
 
     -- Logica de actualizacion de los punteros
-    w_op <= wr & rd;
+    Temp <= (wr & rd);
+    WITH Temp SELECT
+        w_op <= IDLE WHEN "00",
+        escr WHEN "01",
+        Lect WHEN "10",
+        RdRw WHEN OTHERS;
 
     PROCESS (w_ptr_reg, w_ptr_succ, r_ptr_reg, r_ptr_succ, w_op, full_reg, empty_reg)
     BEGIN
         CASE w_op IS
 
                 -- Sin operacion: se mantienen los valores actuales.
-            WHEN "00" =>
+            WHEN Idle =>
                 w_ptr_next <= w_ptr_reg;
                 r_ptr_next <= r_ptr_reg;
                 full_next <= full_reg;
                 empty_next <= empty_reg;
 
                 -- Operacion de lectura
-            WHEN "01" =>
+            WHEN Escr =>
 
                 -- No se actualiza el apuntador de escritura:
                 w_ptr_next <= w_ptr_reg;
@@ -67,32 +74,44 @@ BEGIN
 
                 -- Si los punteros son iguales, la FIFO esta vacia y no se avanza el puntero de lectura;
                 -- en caso contrario, se incrementa.
-                IF (w_ptr_reg = r_ptr_reg) THEN
-                    r_ptr_next <= r_ptr_reg;
-                    empty_next <= '1';
+                IF empty_reg = '0' THEN
+                    IF (r_ptr_succ = w_ptr_reg) THEN
+                        r_ptr_next <= r_ptr_reg;
+                        empty_next <= '1';
+                    ELSE
+                        r_ptr_next <= r_ptr_succ;
+                        empty_next <= '0';
+                    END IF;
                 ELSE
-                    r_ptr_next <= r_ptr_succ;
-                    empty_next <= '0';
+                    r_ptr_next <= r_ptr_reg;
+                    empty_next <= empty_reg;
+                    full_next <= full_reg;
                 END IF;
 
                 -- Operación de escritura (wr='1', rd='0')
-            WHEN "10" =>
+            WHEN Lect =>
 
                 -- No se actualiza el apuntador de lectura:
                 r_ptr_next <= r_ptr_reg;
-                empty_next <= '0';
+                full_next <= '0';
 
                 -- Si el sucesor de w_ptr es igual a r_ptr, la FIFO esta llena: no se avanza el apuntador de escritura.
-                IF (w_ptr_succ = r_ptr_reg) THEN
-                    w_ptr_next <= w_ptr_reg; -- No se avanza
-                    full_next <= '1';
+                IF full_reg = '0' THEN
+                    IF (w_ptr_succ = r_ptr_reg) THEN
+                        w_ptr_next <= w_ptr_reg; -- No se avanza
+                        full_next <= '1';
+                    ELSE
+                        w_ptr_next <= w_ptr_succ;
+                        full_next <= '0';
+                    END IF;
                 ELSE
-                    w_ptr_next <= w_ptr_succ;
-                    full_next <= '0';
+                    w_ptr_next <= w_ptr_reg;
+                    full_next <= full_reg;
+                    empty_next <= empty_reg;
                 END IF;
 
                 -- Operacion simultanea (wr='1', rd='1')
-            WHEN OTHERS =>
+            WHEN RdRw =>
                 w_ptr_next <= w_ptr_succ;
                 r_ptr_next <= r_ptr_succ;
                 full_next <= full_reg;

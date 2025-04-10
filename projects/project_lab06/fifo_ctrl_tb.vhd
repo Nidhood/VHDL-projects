@@ -13,6 +13,8 @@ ARCHITECTURE fifo_ctrl_tb_arch OF fifo_ctrl_tb IS
     SIGNAL wr : STD_LOGIC := '0';
     SIGNAL w_data : STD_LOGIC_VECTOR(3 DOWNTO 0);
     SIGNAL r_data : STD_LOGIC_VECTOR(3 DOWNTO 0);
+    SIGNAL w_addr : STD_LOGIC_VECTOR(3 DOWNTO 0);
+    SIGNAL r_addr : STD_LOGIC_VECTOR(3 DOWNTO 0);
     SIGNAL empty : STD_LOGIC;
     SIGNAL full : STD_LOGIC;
     SIGNAL w_addr_ss : STD_LOGIC_VECTOR(6 DOWNTO 0);
@@ -34,6 +36,8 @@ BEGIN
             wr => wr,
             w_data => w_data,
             r_data => r_data,
+            w_addr => w_addr,
+            r_addr => r_addr,
             empty => empty,
             full => full,
             w_addr_ss => w_addr_ss,
