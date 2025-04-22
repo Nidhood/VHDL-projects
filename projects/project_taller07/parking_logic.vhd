@@ -1,6 +1,20 @@
+--******************************************************--
+--                                                      --
+--              Jerónimo Rueda Giraldo                  --
+--                                                      --
+--  Proyect: FSM  - Taller 07                           --
+--  Date: 22/04/2023                                    --
+--                                                      --
+--******************************************************--
+--                                                      --
+--                                                      --
+--                                                      --
+--                                                      --
+--******************************************************--
 
 LIBRARY IEEE;
 USE IEEE.std_logic_1164.ALL;
+USE IEEE.numeric_std.ALL;
 LIBRARY ALTERA;
 USE ALTERA.altera_primitives_components.ALL;
 
@@ -22,7 +36,7 @@ ENTITY parking_count IS
         car_exit : OUT STD_LOGIC;
         --car_count_b : OUT STD_LOGIC_VECTOR (6 DOWNTO 0);
         --car_count_h : OUT STD_LOGIC_VECTOR (6 DOWNTO 0);
-        parking_full : IN STD_LOGIC
+        parking_full : OUT STD_LOGIC
     );
 
 END ENTITY parking_count;
@@ -32,11 +46,13 @@ ARCHITECTURE parking_count_Arch OF parking_count IS
     TYPE state IS (init, e1, e2, e3, s1, s2, s3);
 
     SIGNAL NextState, PrevState : state;
-    SIGNAL car_count : STD_LOGIC_VECTOR(3 DOWNTO 0);
+    SIGNAL car_count : STD_LOGIC_VECTOR(3 DOWNTO 0) := "0000";
     SIGNAL car_enter_counter : INTEGER RANGE 0 TO 5 := 0;
-    SIGNAL car_enter_enable : STD_LOGIC := '0';
     SIGNAL car_exit_counter : INTEGER RANGE 0 TO 5 := 0;
-    SIGNAL car_exit_enable : STD_LOGIC := '0';
+    SIGNAL car_enter_pending : STD_LOGIC := '0';
+    SIGNAL car_exit_pending : STD_LOGIC := '0';
+    SIGNAL car_enter_pending_int : STD_LOGIC := '0';
+    SIGNAL car_exit_pending_int : STD_LOGIC := '0';
 BEGIN
 
     --******************************************************--
@@ -67,12 +83,19 @@ BEGIN
             car_enter_counter <= 0;
             car_exit_counter <= 0;
             car_count <= "0000";
+            car_enter_pending_int <= '0';
+            car_exit_pending_int <= '0';
+
         ELSIF rising_edge(clk) THEN
-            -- Control car_enter
-            IF car_enter_enable = '1' THEN
+            -- Registrar flags desde la FSM
+            car_enter_pending_int <= car_enter_pending;
+            car_exit_pending_int <= car_exit_pending;
+
+            -- Manejo entrada
+            IF car_enter_pending_int = '1' THEN
                 car_enter <= '1';
                 car_enter_counter <= 1;
-                car_enter_enable <= '0'; -- solo se activa una vez
+                car_count <= STD_LOGIC_VECTOR(unsigned(car_count) + 1);
             ELSIF car_enter_counter > 0 THEN
                 car_enter_counter <= car_enter_counter + 1;
                 IF car_enter_counter = 5 THEN
@@ -81,11 +104,11 @@ BEGIN
                 END IF;
             END IF;
 
-            -- Control car_exit
-            IF car_exit_enable = '1' THEN
+            -- Manejo salida
+            IF car_exit_pending_int = '1' THEN
                 car_exit <= '1';
                 car_exit_counter <= 1;
-                car_exit_enable <= '0';
+                car_count <= STD_LOGIC_VECTOR(unsigned(car_count) - 1);
             ELSIF car_exit_counter > 0 THEN
                 car_exit_counter <= car_exit_counter + 1;
                 IF car_exit_counter = 5 THEN
@@ -103,7 +126,7 @@ BEGIN
                 ----------------------------------------------------------
             WHEN init =>
 
-                IF (sensor0 = '1' AND sensor1 = '0' AND parking_full = '0') THEN
+                IF (sensor0 = '1' AND sensor1 = '0' AND car_count /= "1001") THEN
                     NextState <= e1;
 
                 ELSIF (sensor0 = '0' AND sensor1 = '1') THEN
@@ -136,8 +159,7 @@ BEGIN
                 ----------------------------------------------------------
             WHEN e3 =>
                 IF (sensor0 = '0' AND sensor1 = '0') THEN
-                    car_enter_enable <= '1'; -- Activar durante 5 ciclos de reloj
-                    car_count <= unsigned(car_count) + 1;
+                    car_enter_pending <= '1'; -- Activar durante 5 ciclos de reloj
                     NextState <= init;
                 ELSE
                     NextState <= e3;
@@ -166,8 +188,7 @@ BEGIN
             WHEN s3 =>
 
                 IF (sensor0 = '0' AND sensor1 = '0') THEN
-                    car_exit_enable <= '1'; --Activar por 5 ciclos de reloj
-                    car_count <= STD_LOGIC_VECTOR(unsigned(car_count) - 1);
+                    car_exit_pending <= '1'; --Activar por 5 ciclos de reloj
                     NextState <= init;
                 ELSE
                     NextState <= s3;
