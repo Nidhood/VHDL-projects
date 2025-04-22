@@ -1,16 +1,4 @@
---******************************************************--
---                                                      --
---              Jerónimo Rueda Giraldo                  --
---                                                      --
---  Proyect: FSM  - Taller 07                           --
---  Date: 22/04/2023                                    --
---                                                      --
---******************************************************--
---                                                      --
---                                                      --
---                                                      --
---                                                      --
---******************************************************--
+
 
 LIBRARY IEEE;
 USE IEEE.std_logic_1164.ALL;
@@ -47,12 +35,12 @@ ARCHITECTURE parking_count_Arch OF parking_count IS
 
     SIGNAL NextState, PrevState : state;
     SIGNAL car_count : STD_LOGIC_VECTOR(3 DOWNTO 0) := "0000";
-    SIGNAL car_enter_counter : INTEGER RANGE 0 TO 5 := 0;
-    SIGNAL car_exit_counter : INTEGER RANGE 0 TO 5 := 0;
-    SIGNAL car_enter_pending : STD_LOGIC := '0';
-    SIGNAL car_exit_pending : STD_LOGIC := '0';
-    SIGNAL car_enter_pending_int : STD_LOGIC := '0';
-    SIGNAL car_exit_pending_int : STD_LOGIC := '0';
+
+    -- Señales para temporizador universal
+    SIGNAL car_enter_enable : STD_LOGIC := '0';
+    SIGNAL car_exit_enable : STD_LOGIC := '0';
+    SIGNAL car_enter_done : STD_LOGIC;
+    SIGNAL car_exit_done : STD_LOGIC;
 BEGIN
 
     --******************************************************--
@@ -69,55 +57,48 @@ BEGIN
             PrevState <= init;
 
         ELSIF (RISING_EDGE(Clk)) THEN
-
             PrevState <= NextState;
 
         END IF;
 
     END PROCESS StateMemory;
-    CarSignalControl : PROCESS (clk, rst)
-    BEGIN
-        IF rst = '1' THEN
-            car_enter <= '0';
-            car_exit <= '0';
-            car_enter_counter <= 0;
-            car_exit_counter <= 0;
-            car_count <= "0000";
-            car_enter_pending_int <= '0';
-            car_exit_pending_int <= '0';
+    --=========================
+    -- INSTANCIA DEL CONTADOR UNIVERSAL PARA car_enter
+    --=========================
+    CarEnter_Timer : ENTITY work.univ_bin_counter
+        GENERIC MAP(N => 3)
+        PORT MAP(
+            clk => clk,
+            rst => rst,
+            ena => car_enter_enable,
+            syn_clr => '0',
+            load => '0',
+            up => '1',
+            d => (OTHERS => '0'),
+            max_val => "101", -- 5 ciclos
+            max_tick => car_enter_done,
+            min_tick => OPEN,
+            counter => OPEN
+        );
 
-        ELSIF rising_edge(clk) THEN
-            -- Registrar flags desde la FSM
-            car_enter_pending_int <= car_enter_pending;
-            car_exit_pending_int <= car_exit_pending;
-
-            -- Manejo entrada
-            IF car_enter_pending_int = '1' THEN
-                car_enter <= '1';
-                car_enter_counter <= 1;
-                car_count <= STD_LOGIC_VECTOR(unsigned(car_count) + 1);
-            ELSIF car_enter_counter > 0 THEN
-                car_enter_counter <= car_enter_counter + 1;
-                IF car_enter_counter = 5 THEN
-                    car_enter <= '0';
-                    car_enter_counter <= 0;
-                END IF;
-            END IF;
-
-            -- Manejo salida
-            IF car_exit_pending_int = '1' THEN
-                car_exit <= '1';
-                car_exit_counter <= 1;
-                car_count <= STD_LOGIC_VECTOR(unsigned(car_count) - 1);
-            ELSIF car_exit_counter > 0 THEN
-                car_exit_counter <= car_exit_counter + 1;
-                IF car_exit_counter = 5 THEN
-                    car_exit <= '0';
-                    car_exit_counter <= 0;
-                END IF;
-            END IF;
-        END IF;
-    END PROCESS;
+    --=========================
+    -- INSTANCIA DEL CONTADOR UNIVERSAL PARA car_exit
+    --=========================
+    CarExit_Timer : ENTITY work.univ_bin_counter
+        GENERIC MAP(N => 3)
+        PORT MAP(
+            clk => clk,
+            rst => rst,
+            ena => car_exit_enable,
+            syn_clr => '0',
+            load => '0',
+            up => '1',
+            d => (OTHERS => '0'),
+            max_val => "101",
+            max_tick => car_exit_done,
+            min_tick => OPEN,
+            counter => OPEN
+        );
 
     StateChange : PROCESS (PrevState, sensor0, sensor1)
     BEGIN
@@ -159,7 +140,12 @@ BEGIN
                 ----------------------------------------------------------
             WHEN e3 =>
                 IF (sensor0 = '0' AND sensor1 = '0') THEN
-                    car_enter_pending <= '1'; -- Activar durante 5 ciclos de reloj
+                    IF car_enter_done = '0' THEN
+                        car_enter_enable <= '1';
+                    ELSE
+                        car_enter_enable <= '0'; -- apagar cuando termina
+                    END IF;
+                    car_count <= STD_LOGIC_VECTOR(unsigned(car_count) + 1);
                     NextState <= init;
                 ELSE
                     NextState <= e3;
@@ -188,7 +174,12 @@ BEGIN
             WHEN s3 =>
 
                 IF (sensor0 = '0' AND sensor1 = '0') THEN
-                    car_exit_pending <= '1'; --Activar por 5 ciclos de reloj
+                    IF car_exit_done = '0' THEN
+                        car_exit_enable <= '1';
+                    ELSE
+                        car_exit_enable <= '0';
+                    END IF;
+                    car_count <= STD_LOGIC_VECTOR(unsigned(car_count) - 1);
                     NextState <= init;
                 ELSE
                     NextState <= s3;
@@ -198,6 +189,10 @@ BEGIN
         END CASE;
 
     END PROCESS StateChange;
+    car_enter <= '1' WHEN car_enter_enable = '1' ELSE
+        '0';
+    car_exit <= '1' WHEN car_exit_enable = '1' ELSE
+        '0';
     parking_full <= '1' WHEN car_count = "1001" ELSE
         '0';
 
