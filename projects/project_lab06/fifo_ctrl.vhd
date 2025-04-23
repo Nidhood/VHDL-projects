@@ -66,7 +66,7 @@ BEGIN
                 empty_next <= empty_reg;
 
                 -- Operacion de lectura
-            WHEN Escr =>
+            WHEN Lect =>
 
                 -- No se actualiza el apuntador de escritura:
                 w_ptr_next <= w_ptr_reg;
@@ -89,7 +89,7 @@ BEGIN
                 END IF;
 
                 -- Operación de escritura (wr='1', rd='0')
-            WHEN Lect =>
+            WHEN Escr =>
 
                 -- No se actualiza el apuntador de lectura:
                 r_ptr_next <= r_ptr_reg;
