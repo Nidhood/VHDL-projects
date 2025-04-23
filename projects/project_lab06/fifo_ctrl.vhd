@@ -93,7 +93,6 @@ BEGIN
 
                 -- No se actualiza el apuntador de lectura:
                 r_ptr_next <= r_ptr_reg;
-                full_next <= '0';
                 empty_next <= '0';
 
                 -- Si el sucesor de w_ptr es igual a r_ptr, la FIFO esta llena: no se avanza el apuntador de escritura.
