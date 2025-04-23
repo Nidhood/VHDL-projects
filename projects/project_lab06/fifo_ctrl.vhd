@@ -50,8 +50,8 @@ BEGIN
     Temp <= (wr & rd);
     WITH Temp SELECT
         w_op <= IDLE WHEN "00",
-        escr WHEN "01",
-        Lect WHEN "10",
+        escr WHEN "10",
+        Lect WHEN "01",
         RdRw WHEN OTHERS;
 
     PROCESS (w_ptr_reg, w_ptr_succ, r_ptr_reg, r_ptr_succ, w_op, full_reg, empty_reg)
@@ -94,6 +94,7 @@ BEGIN
                 -- No se actualiza el apuntador de lectura:
                 r_ptr_next <= r_ptr_reg;
                 full_next <= '0';
+                empty_next <= '0';
 
                 -- Si el sucesor de w_ptr es igual a r_ptr, la FIFO esta llena: no se avanza el apuntador de escritura.
                 IF full_reg = '0' THEN
