@@ -1,0 +1,151 @@
+LIBRARY IEEE;
+USE IEEE.std_logic_1164.ALL;
+USE IEEE.numeric_std.ALL;
+
+ENTITY bist_parking IS
+    GENERIC (
+        delay_pulses : INTEGER := 4
+    );
+    PORT (
+        clk         : IN  STD_LOGIC;
+        rst         : IN  STD_LOGIC;
+        sensor0     : OUT STD_LOGIC;
+        sensor1     : OUT STD_LOGIC;
+        car_enter   : IN  STD_LOGIC;
+        car_exit    : IN  STD_LOGIC;
+        parking_full: IN  STD_LOGIC
+    );
+END ENTITY;
+
+ARCHITECTURE rtl OF bist_parking IS
+    TYPE state IS (
+        ini, delay, stim_s0, stim_s1, stim_s0s1, stim_s1s0,
+        wait_enter, wait_exit, inc_seq
+    );
+
+    SIGNAL state_pr, state_next : state;
+    SIGNAL sequence : INTEGER RANGE 0 TO 17 := 0; -- 9 entradas + 9 salidas
+    SIGNAL delay_counter : INTEGER := 0;
+    SIGNAL tick : STD_LOGIC := '0';
+
+BEGIN
+
+    -- Delay generator
+    delay_proc: PROCESS(clk, rst)
+    BEGIN
+        IF rst = '1' THEN
+            delay_counter <= 0;
+            tick <= '0';
+        ELSIF rising_edge(clk) THEN
+            IF state_pr = delay THEN
+                IF delay_counter < delay_pulses THEN
+                    delay_counter <= delay_counter + 1;
+                    tick <= '0';
+                ELSE
+                    tick <= '1';
+                END IF;
+            ELSE
+                delay_counter <= 0;
+                tick <= '0';
+            END IF;
+        END IF;
+    END PROCESS;
+
+    -- Secuencial
+    seq_proc: PROCESS(clk, rst)
+    BEGIN
+        IF rst = '1' THEN
+            state_pr <= ini;
+        ELSIF rising_edge(clk) THEN
+            state_pr <= state_next;
+        END IF;
+    END PROCESS;
+
+    -- Combinacional
+    comb_proc: PROCESS(state_pr, tick, car_enter, car_exit, parking_full, sequence)
+    BEGIN
+        -- Defaults
+        sensor0 <= '0';
+        sensor1 <= '0';
+        state_next <= state_pr;
+
+        CASE state_pr IS
+            WHEN ini =>
+                IF sequence < 9 THEN
+                    state_next <= stim_s0;
+                ELSE
+                    state_next <= stim_s1;
+                END IF;
+
+            -- Entrada (sensor0 → ambos → sensor1 → libres)
+            WHEN stim_s0 =>
+                sensor0 <= '1';
+                state_next <= delay;
+
+            WHEN stim_s0s1 =>
+                sensor0 <= '1';
+                sensor1 <= '1';
+                state_next <= delay;
+
+            WHEN stim_s1 =>
+                sensor1 <= '1';
+                state_next <= delay;
+
+            WHEN stim_s1s0 =>
+                sensor0 <= '1';
+                sensor1 <= '1';
+                state_next <= delay;
+
+            WHEN delay =>
+                IF tick = '1' THEN
+                    IF sequence < 9 THEN
+                        IF state_pr = stim_s0 THEN
+                            state_next <= stim_s0s1;
+                        ELSIF state_pr = stim_s0s1 THEN
+                            state_next <= stim_s1;
+                        ELSIF state_pr = stim_s1 THEN
+                            state_next <= wait_enter;
+                        END IF;
+                    ELSE
+                        IF state_pr = stim_s1 THEN
+                            state_next <= stim_s0s1;
+                        ELSIF state_pr = stim_s0s1 THEN
+                            state_next <= stim_s0;
+                        ELSIF state_pr = stim_s0 THEN
+                            state_next <= wait_exit;
+                        END IF;
+                    END IF;
+                END IF;
+
+            WHEN wait_enter =>
+                IF car_enter = '1' THEN
+                    state_next <= inc_seq;
+                END IF;
+
+            WHEN wait_exit =>
+                IF car_exit = '1' THEN
+                    state_next <= inc_seq;
+                END IF;
+
+            WHEN inc_seq =>
+                IF sequence < 17 THEN
+                    state_next <= ini;
+                ELSE
+                    state_next <= ini; -- Repetir o ir a estado final si deseas
+                END IF;
+        END CASE;
+    END PROCESS;
+
+    -- Secuencia contador
+    process(clk, rst)
+    begin
+        if rst = '1' then
+            sequence <= 0;
+        elsif rising_edge(clk) then
+            IF state_pr = inc_seq THEN
+                sequence <= sequence + 1;
+            END IF;
+        end if;
+    end process;
+
+END ARCHITECTURE;
