@@ -10,6 +10,7 @@ ENTITY parking_count_bist IS
         car_enter : IN STD_LOGIC;
         car_exit : IN STD_LOGIC;
         parking_full : IN STD_LOGIC;
+        parking_empty : IN STD_LOGIC;
         s0 : OUT STD_LOGIC;
         s1 : OUT STD_LOGIC
     );
@@ -88,7 +89,7 @@ BEGIN
     -- Combinational Part FSM
     --=========================================================================
 
-    combinational : PROCESS (state_pr, car_enter, car_exit, max_tick, SEQUENCE, parking_full)
+    combinational : PROCESS (state_pr, car_enter, car_exit, max_tick, SEQUENCE, parking_full, parking_empty)
     BEGIN
         CASE state_pr IS
             WHEN ini =>
@@ -142,7 +143,7 @@ BEGIN
                 s0 <= '0';
                 s1 <= '1';
                 increment_tick <= '0';
-                IF ((parking_full = '0') AND (SEQUENCE /= 0)) THEN
+                IF ((parking_empty = '1') AND (SEQUENCE /= 0)) THEN
                     state_next <= inc_sequence;
                 ELSIF (SEQUENCE = 1) THEN
                     state_next <= s0s1_st;

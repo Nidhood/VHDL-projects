@@ -15,6 +15,7 @@ ARCHITECTURE tb_arch OF parking_count_tb IS
     SIGNAL car_enter_tb : STD_LOGIC := '0';
     SIGNAL car_exit_tb : STD_LOGIC := '0';
     SIGNAL parking_full_tb : STD_LOGIC := '0';
+    SIGNAL parking_empty_tb : STD_LOGIC := '0';
 BEGIN
 
     -- Generación del reloj (20 ns por ciclo)
@@ -45,6 +46,7 @@ BEGIN
             sensor1 => sensor1_tb,
             car_enter => car_enter_tb,
             car_exit => car_exit_tb,
+            parking_empty => parking_empty_tb,
             parking_full => parking_full_tb
         );
 
@@ -55,6 +57,7 @@ BEGIN
             rst => rst_tb,
             car_enter => car_enter_tb,
             car_exit => car_exit_tb,
+            parking_empty => parking_empty_tb,
             parking_full => parking_full_tb,
             s0 => sensor0_tb,
             s1 => sensor1_tb
