@@ -2,7 +2,7 @@ LIBRARY IEEE;
 USE ieee.std_logic_1164.ALL;
 USE ieee.numeric_std.ALL;
 
-ENTITY univ_bin_counter_max IS
+ENTITY GraLimCounter IS
     GENERIC (N : INTEGER := 4);
     PORT (
         clk : IN STD_LOGIC;
@@ -17,9 +17,9 @@ ENTITY univ_bin_counter_max IS
         min_tick : OUT STD_LOGIC;--
         counter : OUT STD_LOGIC_VECTOR(N - 1 DOWNTO 0)
     );
-END univ_bin_counter_max;
+END GraLimCounter;
 
-ARCHITECTURE rtl OF univ_bin_counter_max IS
+ARCHITECTURE CounterArch OF GraLimCounter IS
     CONSTANT zeros : unsigned(N - 1 DOWNTO 0) := (OTHERS => '0');
     SIGNAL count_s : unsigned(N - 1 DOWNTO 0);
     SIGNAL count_next : unsigned(N - 1 DOWNTO 0);
@@ -60,4 +60,4 @@ BEGIN
     min_tick <= '1' WHEN (count_s = zeros) ELSE
         '0';
 
-END ARCHITECTURE;
+END ARCHITECTURE CounterArch;

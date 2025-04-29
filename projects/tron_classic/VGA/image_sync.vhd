@@ -24,8 +24,8 @@ ARCHITECTURE MainArch OF ImageSync IS
     SIGNAL vEnable : uint01;
     SIGNAL HCount : uint11;
     SIGNAL VCount : uint11;
-    SIGNAL videoOn : uint01;
     SIGNAL VideoHon : uint01;
+    SIGNAL VideoVon : uint01;
     SIGNAL TmpVideoOn : uint01;
 
     SIGNAL TmpHs1 : uint01;
@@ -38,11 +38,11 @@ BEGIN
     -- Get the Video on signal, which is set to one when the Vertical (V) and Horizontal (H)
     -- counters are within the Display range.
 
-    TmpVideoOn <= VideoOn AND VideoHon;
+    TmpVideoOn <= VideoVOn AND VideoHon;
     VideoOn <= TmpVideoOn;
     VideoHon <= '1' WHEN (UNSIGNED(HCount) <= UNSIGNED(HTime.Display)) ELSE
         '0';
-    VideoOn <= '1' WHEN (UNSIGNED(VCount) <= UNSIGNED(VTime.Display)) ELSE
+    VideoVOn <= '1' WHEN (UNSIGNED(VCount) <= UNSIGNED(VTime.Display)) ELSE
         '0';
 
     -- Route the H Count and V Count to the Pixel X and Pixel Y outputs when the counters are
@@ -75,33 +75,35 @@ BEGIN
     -- HTime and VTime are defined on the VgaPackage.
 
     HCounter : ENTITY WORK.GraLimCounter(CounterArch)
-        GENERIC MAP(Size => 11)
+        GENERIC MAP(N => 11)
         PORT MAP(
-            Clk => SyncClk,
-            MR => Reset,
-            SR => '0',
-            ER => '1',
-            Up => '1',
-            Dwn => '0',
-            Limit => HTime.FullScan,
-            MaxCount => vEnable,
-            MinCount => OPEN,
-            Count => HCount
+            clk => SyncClk,
+            rst => Reset,
+            ena => '1',
+            syn_clr => '0',
+            load => '0',
+            up => '1',
+            d => "00000000000",
+            max_val => HTime.FullScan,
+            max_tick => vEnable,
+            min_tick => OPEN,
+            counter => HCount
         );
 
     VCounter : ENTITY WORK.GraLimCounter(CounterArch)
-        GENERIC MAP(Size => 11)
+        GENERIC MAP(N => 11)
         PORT MAP(
-            Clk => SyncClk,
-            MR => Reset,
-            SR => '0',
-            ER => vEnable,
-            Up => '1',
-            Dwn => '0',
-            Limit => VTime.FullScan,
-            MaxCount => OPEN,
-            MinCount => OPEN,
-            Count => VCount
+            clk => SyncClk,
+            rst => Reset,
+            ena => VEnable,
+            syn_clr => '0',
+            load => '0',
+            up => '1',
+            d => "00000000000",
+            max_val => VTime.FullScan,
+            max_tick => OPEN,
+            min_tick => OPEN,
+            counter => VCount
         );
 
 END MainArch;

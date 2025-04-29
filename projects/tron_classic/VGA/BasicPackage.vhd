@@ -18,4 +18,30 @@ PACKAGE BasicPackage IS
     SUBTYPE uint10 IS STD_LOGIC_VECTOR(9 DOWNTO 0);
     SUBTYPE uint11 IS STD_LOGIC_VECTOR(10 DOWNTO 0);
 
+    PURE FUNCTION Slv2Int(Input : STD_LOGIC_VECTOR
+) RETURN INTEGER;
+
+PURE FUNCTION Int2Slv(Input : INTEGER; Size : INTEGER
+) RETURN STD_LOGIC_VECTOR;
+
 END PACKAGE BasicPackage;
+
+-------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------
+
+PACKAGE BODY BasicPackage IS
+    -- Función Slv2Int
+    PURE FUNCTION Slv2Int(Input : STD_LOGIC_VECTOR)
+    RETURN INTEGER IS
+BEGIN
+    RETURN TO_INTEGER(UNSIGNED(Input));
+END Slv2Int;
+-- Función Int2Slv
+PURE FUNCTION Int2Slv(Input : INTEGER;
+Size : INTEGER)
+RETURN STD_LOGIC_VECTOR IS
+BEGIN
+RETURN STD_LOGIC_VECTOR(TO_UNSIGNED(Input, Size));
+END Int2Slv;
+END BasicPackage;
