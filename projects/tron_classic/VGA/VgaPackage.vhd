@@ -37,7 +37,7 @@ PACKAGE VgaPackage IS
     BackP => 160);
 
     CONSTANT VData : SvgaDataT := (Display => 599,
-    FrontP => 13,
+    FrontP => 1,
     Retrace => 2,
     BackP => 21);
 

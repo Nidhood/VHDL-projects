@@ -11,9 +11,7 @@ ENTITY ImageSync IS
         SyncClk : IN uint01;
         HSync : OUT uint01;
         VSync : OUT uint01;
-        VideoOn : OUT uint01;
-        PixelX : OUT uint11;
-        PixelY : OUT uint11
+        RGB : OUT ColorT
     );
 END ENTITY ImageSync;
 
@@ -32,6 +30,10 @@ ARCHITECTURE MainArch OF ImageSync IS
     SIGNAL TmpHs2 : uint01;
     SIGNAL TmpVs1 : uint01;
     SIGNAL TmpVs2 : uint01;
+
+    SIGNAL PixelX : uint11;
+    SIGNAL PixelY : uint11;
+    SIGNAL VideoOn : uint01;
 
 BEGIN
 
@@ -104,6 +106,14 @@ BEGIN
             max_tick => OPEN,
             min_tick => OPEN,
             counter => VCount
+        );
+
+    Colores : ENTITY WORK.PixelGenerate(MainArch)
+        PORT MAP(
+            PosX => PixelX,
+            PosY => PixelY,
+            VideoOn => VideoOn,
+            RGB => RGB
         );
 
 END MainArch;
