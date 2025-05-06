@@ -7,101 +7,104 @@ USE WORK.SquarePkg.ALL;
 
 ENTITY monitor_vga IS
     PORT (
-        Rst       : IN uint01;
-        Clk       : IN uint01;
-        Btn_Up    : IN uint01;
-        Btn_Down  : IN uint01;
-        Btn_Left  : IN uint01;
+        Rst : IN uint01;
+        Clk : IN uint01;
+        Btn_Up : IN uint01;
+        Btn_Down : IN uint01;
+        Btn_Left : IN uint01;
         Btn_Right : IN uint01;
-        HSync     : OUT uint01;
-        VSync     : OUT uint01;
-        VGA_clk   : OUT uint01;
-        RGB       : OUT ColorT
+        HSync : OUT uint01;
+        VSync : OUT uint01;
+        VGA_clk : OUT uint01;
+        RGB : OUT ColorT
     );
 END monitor_vga;
 
 ARCHITECTURE MainArch OF monitor_vga IS
     -- Señales internas
-    SIGNAL VideoOn      : uint01;
-    SIGNAL PixelX       : uint11;
-    SIGNAL PixelY       : uint11;
-    SIGNAL Sq_X         : INTEGER := 400;
-    SIGNAL Sq_Y         : INTEGER := 300;
+    SIGNAL VideoOn : uint01;
+    SIGNAL PixelX : uint11;
+    SIGNAL PixelY : uint11;
+    SIGNAL Sq_X : INTEGER := 400;
+    SIGNAL Sq_Y : INTEGER := 300;
 
     -- Botones "limpios"
-    SIGNAL btn_up_clean    : STD_LOGIC;
-    SIGNAL btn_down_clean  : STD_LOGIC;
-    SIGNAL btn_left_clean  : STD_LOGIC;
+    SIGNAL btn_up_clean : STD_LOGIC;
+    SIGNAL btn_down_clean : STD_LOGIC;
+    SIGNAL btn_left_clean : STD_LOGIC;
     SIGNAL btn_right_clean : STD_LOGIC;
+
+    SIGNAL btn_up_tick : STD_LOGIC;
+    SIGNAL btn_down_tick : STD_LOGIC;
+    SIGNAL btn_left_tick : STD_LOGIC;
+    SIGNAL btn_right_tick : STD_LOGIC;
 BEGIN
-
-    -- Anti-debouncing para cada botón
-    DebUp : ENTITY WORK.anti_debouncing
-        PORT MAP (
-            clk        => Clk,
-            rst        => Rst,
-            button_in  => Btn_Up,
-            button_out => btn_up_clean
+    BtnUpDebounce : ENTITY WORK.anti_debouncing
+        PORT MAP(
+            clk => Clk,
+            rst => Rst,
+            signal_out => btn_up_tick
         );
 
-    DebDown : ENTITY WORK.anti_debouncing
-        PORT MAP (
-            clk        => Clk,
-            rst        => Rst,
-            button_in  => Btn_Down,
-            button_out => btn_down_clean
+    BtnDownDebounce : ENTITY WORK.anti_debouncing
+        PORT MAP(
+            clk => Clk,
+            rst => Rst,
+            signal_out => btn_down_tick
         );
 
-    DebLeft : ENTITY WORK.anti_debouncing
-        PORT MAP (
-            clk        => Clk,
-            rst        => Rst,
-            button_in  => Btn_Left,
-            button_out => btn_left_clean
+    BtnLeftDebounce : ENTITY WORK.anti_debouncing
+        PORT MAP(
+            clk => Clk,
+            rst => Rst,
+            signal_out => btn_left_tick
         );
 
-    DebRight : ENTITY WORK.anti_debouncing
-        PORT MAP (
-            clk        => Clk,
-            rst        => Rst,
-            button_in  => Btn_Right,
-            button_out => btn_right_clean
+    BtnRightDebounce : ENTITY WORK.anti_debouncing
+        PORT MAP(
+            clk => Clk,
+            rst => Rst,
+            signal_out => btn_right_tick
         );
+    btn_up_clean <= NOT (Btn_Up) AND btn_up_tick;
+    btn_down_clean <= NOT (Btn_Down) AND btn_down_tick;
+    btn_left_clean <= NOT (Btn_Left) AND btn_left_tick;
+    btn_right_clean <= NOT (Btn_Right) AND btn_right_tick;
 
     -- Controlador de posición con botones limpios
     CtrlSquare : ENTITY WORK.SquareController(Behavioral)
-        PORT MAP (
-            clk       => Clk,
-            rst       => Rst,
-            btn_up    => btn_up_clean,
-            btn_down  => btn_down_clean,
-            btn_left  => btn_left_clean,
+        PORT MAP(
+            clk => Clk,
+            rst => Rst,
+            btn_up => btn_up_clean,
+            btn_down => btn_down_clean,
+            btn_left => btn_left_clean,
             btn_right => btn_right_clean,
-            pos_x     => Sq_X,
-            pos_y     => Sq_Y
+            pos_x => Sq_X,
+            pos_y => Sq_Y
         );
 
     -- Generador de sincronismo VGA
     ImageSync : ENTITY WORK.ImageSync(MainArch)
-        PORT MAP (
-            Reset    => Rst,
-            SyncClk  => Clk,
-            HSync    => HSync,
-            VSync    => VSync,
-            VideoOn  => VideoOn,
-            PixelX   => PixelX,
-            PixelY   => PixelY
+        PORT MAP(
+            Reset => Rst,
+            SyncClk => Clk,
+            HSync => HSync,
+            VSync => VSync,
+            VideoOn => VideoOn,
+            PixelX => PixelX,
+            PixelY => PixelY
         );
 
     -- Generador de color del píxel
     Colores : ENTITY WORK.PixelGenerate(MainArch)
-        PORT MAP (
-            PosX    => PixelX,
-            PosY    => PixelY,
-            SQ_X0   => Sq_X,
-            SQ_Y0   => Sq_Y,
+        PORT MAP(
+            PosX => PixelX,
+            PosY => PixelY,
+            SQ_X0 => Sq_X,
+            SQ_Y0 => Sq_Y,
             VideoOn => VideoOn,
-            RGB     => RGB
+            RGB => RGB
         );
 
     VGA_clk <= Clk;
