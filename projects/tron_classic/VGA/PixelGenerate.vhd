@@ -9,8 +9,8 @@ ENTITY PixelGenerate IS
     PORT (
         PosX : IN uint11;
         PosY : IN uint11;
-        SQ_X0   : IN INTEGER;
-        SQ_Y0   : IN INTEGER;
+        SQ_X0 : IN INTEGER;
+        SQ_Y0 : IN INTEGER;
         VideoOn : IN uint01;
         RGB : OUT ColorT
     );
@@ -24,7 +24,7 @@ BEGIN
     xi <= to_integer(unsigned(PosX));
     yi <= to_integer(unsigned(PosY));
 
-    PROCESS (xi, yi,SQ_X0,SQ_Y0,VideoOn)
+    PROCESS (xi, yi, SQ_X0, SQ_Y0, VideoOn)
         -- Variables locales combinacionales
         VARIABLE idx_v : INTEGER RANGE 0 TO SQSZ - 1;
         VARIABLE px_v : STD_LOGIC_VECTOR(7 DOWNTO 0);
