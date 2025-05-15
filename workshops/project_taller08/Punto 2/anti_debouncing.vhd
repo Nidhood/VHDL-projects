@@ -10,6 +10,7 @@ ENTITY anti_debouncing IS
     PORT (
         clk : IN STD_LOGIC;
         rst : IN STD_LOGIC;
+		  btn_in : IN STD_LOGIC;
         signal_out : OUT STD_LOGIC
     );
 END ENTITY;
@@ -27,7 +28,7 @@ BEGIN
         PORT MAP(
             clk => clk,
             rst => rst,
-            ena => '1',
+            ena => btn_in,
             syn_clr => '0',
             load => '0',
             up => '1',

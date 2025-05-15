@@ -9,59 +9,56 @@ ENTITY PixelGenerate IS
     PORT (
         PosX : IN uint11;
         PosY : IN uint11;
-        SQ_X0   : IN INTEGER;
-        SQ_Y0   : IN INTEGER;
+        SQ_X0   : IN uint10;
+        SQ_Y0   : IN uint10;
         VideoOn : IN uint01;
         RGB : OUT ColorT
     );
 END ENTITY;
 
 ARCHITECTURE MainArch OF PixelGenerate IS
-    SIGNAL xi, yi : INTEGER;
+    SIGNAL sx, sy : INTEGER;
 BEGIN
+    -- Conversión de posición del sprite a tipo INTEGER
+    sx <= to_integer(unsigned(SQ_X0));
+    sy <= to_integer(unsigned(SQ_Y0));
 
-    -- Convertir PosX/PosY a enteros
-    xi <= to_integer(unsigned(PosX));
-    yi <= to_integer(unsigned(PosY));
-
-    PROCESS (xi, yi,SQ_X0,SQ_Y0,VideoOn)
-        -- Variables locales combinacionales
+    PROCESS (PosX, PosY, sx, sy, VideoOn)
+        VARIABLE xi, yi : INTEGER;
         VARIABLE idx_v : INTEGER RANGE 0 TO SQSZ - 1;
         VARIABLE px_v : STD_LOGIC_VECTOR(7 DOWNTO 0);
     BEGIN
-        IF VideoOn = '1' THEN
-            -- ¿Dentro del área del sprite?
-            IF xi >= SQ_X0 AND xi < SQ_X0 + SQW
-                AND yi >= SQ_Y0 AND yi < SQ_Y0 + SQH THEN
+        xi := to_integer(unsigned(PosX));
+        yi := to_integer(unsigned(PosY));
 
-                -- Calcular índice en el array 1D
-                idx_v := (yi - SQ_Y0) * SQW + (xi - SQ_X0);
+        IF VideoOn = '1' THEN
+            -- Verificar si el píxel actual está dentro del área del cuadrado
+            IF xi >= sx AND xi < sx + SQW AND yi >= sy AND yi < sy + SQH THEN
+                -- Cálculo del índice del pixel en el arreglo del sprite
+                idx_v := (yi - sy) * SQW + (xi - sx);
                 px_v := SquareData(idx_v);
 
-                -- Transparencia: x"FF" muestra fondo (azul); otro valor pinta sprite (negro)
+                -- Dibujar color del cuadrado o fondo según el valor del pixel
                 IF px_v = x"FF" THEN
                     RGB.R <= (OTHERS => '0');
                     RGB.G <= (OTHERS => '0');
-                    RGB.B <= (OTHERS => '1');
+                    RGB.B <= (OTHERS => '1'); -- Fondo azul
                 ELSE
                     RGB.R <= (OTHERS => '0');
                     RGB.G <= (OTHERS => '0');
-                    RGB.B <= (OTHERS => '0');
+                    RGB.B <= (OTHERS => '0'); -- Sprite en negro
                 END IF;
-
             ELSE
                 -- Fondo azul
                 RGB.R <= (OTHERS => '0');
                 RGB.G <= (OTHERS => '0');
                 RGB.B <= (OTHERS => '1');
             END IF;
-
         ELSE
-            -- Fuera de video: negro
+            -- Pantalla en negro fuera de la zona visible
             RGB.R <= (OTHERS => '0');
             RGB.G <= (OTHERS => '0');
             RGB.B <= (OTHERS => '0');
         END IF;
     END PROCESS;
-
 END ARCHITECTURE;
