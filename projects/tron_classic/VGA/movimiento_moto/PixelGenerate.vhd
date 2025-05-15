@@ -11,92 +11,95 @@ ENTITY PixelGenerate IS
     PORT (
         PosX    : IN uint11;
         PosY    : IN uint11;
+        MotoX   : IN uint10;
+        MotoY   : IN uint10;
+        OrientationMoto : IN uint02;
         VideoOn : IN uint01;
         RGB     : OUT ColorT
     );
-END PixelGenerate;
+END ENTITY;
 
 ARCHITECTURE MainArch OF PixelGenerate IS
-    SIGNAL PX, PY : uint11;
+    SIGNAL PX, PY : INTEGER;
+    SIGNAL i, j   : INTEGER;
+    SIGNAL i_rot, j_rot : INTEGER;
 
     SIGNAL en_moto_area    : BOOLEAN;
-    SIGNAL en_titulo_area  : BOOLEAN;
+    SIGNAL es_fondo_moto   : BOOLEAN;
     SIGNAL en_cuadro_azul  : BOOLEAN;
 
-    SIGNAL es_fondo_moto   : BOOLEAN;
+    SIGNAL N : INTEGER := 40;  -- Tamaño del sprite de la moto
 
-    SIGNAL i, j : uint06;
-    SIGNAL i_rot, j_rot : uint06;
-	 
-	 SIGNAL OrientationMoto1 : uint02;
-
-    CONSTANT N : uint06 := Int2SLV(40, 6);
-	 
---00 -> Arriba
---01 -> Abajo
---10 -> Derecha
---11 -> Izquierda
-  
-
+    -- Color del cuadro azul oscuro
+    CONSTANT BLUE_DARK : STD_LOGIC_VECTOR(7 DOWNTO 0) := x"80";
+    -- Color de fondo blanco
+    CONSTANT WHITE : STD_LOGIC_VECTOR(7 DOWNTO 0) := x"FF";
 BEGIN
 
+    -- Conversión de coordenadas a INTEGER
+    PX <= SLV2Int(PosX);
+    PY <= SLV2Int(PosY);
 
-    PX <= PosX;
-    PY <= PosY;
+    -- Índices relativos
+    i <= PY - SLV2Int(MotoY);
+    j <= PX - SLV2Int(MotoX);
 
-    i <= Int2SLV(SLV2Int(PY) - SLV2Int(Moto1.PosY), 6);
-    j <= Int2SLV(SLV2Int(PX) - SLV2Int(Moto1.PosX), 6);
+    -- Rotación según orientación
+    PROCESS (OrientationMoto, i, j, N)
+    BEGIN
+        CASE OrientationMoto IS
+            WHEN "00" => -- Arriba
+                i_rot <= j;
+                j_rot <= N - 1 - i;
+            WHEN "01" => -- Abajo
+                i_rot <= N - 1 - j;
+                j_rot <= i;
+            WHEN "10" => -- Derecha
+                i_rot <= i;
+                j_rot <= j;
+            WHEN OTHERS => -- "11", Izquierda
+                i_rot <= i;
+                j_rot <= N - 1 - j;
+        END CASE;
+    END PROCESS;
 
-    OrientationMoto1 <= Moto1.Orientation;
-
-    i_rot <= i when OrientationMoto1 = "10" else
-             i when OrientationMoto1 = "11" else
-             Int2SLV(SLV2Int(N) - 1 - SLV2Int(j), 6) when OrientationMoto1 = "01" else
-             j when OrientationMoto1 = "00" else
-             i;
-
-    j_rot <= j when OrientationMoto1 = "10" else
-             Int2SLV(SLV2Int(N) - 1 - SLV2Int(j), 6) when OrientationMoto1 = "11" else
-             i when OrientationMoto1 = "01" else
-             Int2SLV(SLV2Int(N) - 1 - SLV2Int(i), 6) when OrientationMoto1 = "00" else
-             j;
-
+    -- Área de la moto (dentro de sprite)
     en_moto_area <= (
-        SLV2Int(PX) >= SLV2Int(Moto1.PosX) AND SLV2Int(PX) < SLV2Int(Moto1.PosX) + SLV2Int(Moto1.Size) AND
-        SLV2Int(PY) >= SLV2Int(Moto1.PosY) AND SLV2Int(PY) < SLV2Int(Moto1.PosY) + SLV2Int(Moto1.Size)
+        i_rot >= 0 AND i_rot < N AND
+        j_rot >= 0 AND j_rot < N
     );
 
+    -- Área del cuadro azul oscuro (ajusta según tus límites)
     en_cuadro_azul <= (
-        PX >= Int2SLV(0, 11) AND PX <= Int2SLV(800, 11) AND
-        PY >= Int2SLV(70, 11) AND PY <= Int2SLV(600, 11)
+        PX >= 20 AND PX <= 780 AND
+        PY >= 100 AND PY <= 580
     );
 
-    -- Transparencia
+    -- Fondo rosado = transparente
     es_fondo_moto <= (
-        MotoPlantilla_DerechaR(SLV2Int(i_rot), SLV2Int(j_rot)) = x"E1" AND
-        MotoPlantilla_DerechaG(SLV2Int(i_rot), SLV2Int(j_rot)) = x"07" AND
-        MotoPlantilla_DerechaB(SLV2Int(i_rot), SLV2Int(j_rot)) = x"FF"
+        en_moto_area AND
+        MotoPlantilla_DerechaR(i_rot, j_rot) = x"E1" AND
+        MotoPlantilla_DerechaG(i_rot, j_rot) = x"07" AND
+        MotoPlantilla_DerechaB(i_rot, j_rot) = x"FF"
     );
 
-    -- RGB.R
+    -- Salida RGB robusta
     RGB.R <=
-        MotoPlantilla_DerechaR(SLV2Int(i_rot), SLV2Int(j_rot)) when (VideoOn = '1' AND en_moto_area AND NOT es_fondo_moto) else
-        x"00" when (VideoOn = '1' AND en_cuadro_azul) else
-        x"FF" when (VideoOn = '1') else
+        MotoPlantilla_DerechaR(i_rot, j_rot) WHEN (VideoOn = '1' AND en_moto_area AND NOT es_fondo_moto) ELSE
+        x"00" WHEN (VideoOn = '1' AND en_cuadro_azul) ELSE
+        WHITE WHEN (VideoOn = '1') ELSE
         x"00";
 
-    -- RGB.G
     RGB.G <=
-        MotoPlantilla_DerechaG(SLV2Int(i_rot), SLV2Int(j_rot)) when (VideoOn = '1' AND en_moto_area AND NOT es_fondo_moto) else
-        x"00" when (VideoOn = '1' AND en_cuadro_azul) else
-        x"FF" when (VideoOn = '1') else
+        MotoPlantilla_DerechaG(i_rot, j_rot) WHEN (VideoOn = '1' AND en_moto_area AND NOT es_fondo_moto) ELSE
+        x"00" WHEN (VideoOn = '1' AND en_cuadro_azul) ELSE
+        WHITE WHEN (VideoOn = '1') ELSE
         x"00";
 
-    -- RGB.B
     RGB.B <=
-        MotoPlantilla_DerechaB(SLV2Int(i_rot), SLV2Int(j_rot)) when (VideoOn = '1' AND en_moto_area AND NOT es_fondo_moto) else
-        x"80" when (VideoOn = '1' AND en_cuadro_azul) else
-        x"FF" when (VideoOn = '1') else
+        MotoPlantilla_DerechaB(i_rot, j_rot) WHEN (VideoOn = '1' AND en_moto_area AND NOT es_fondo_moto) ELSE
+        BLUE_DARK WHEN (VideoOn = '1' AND en_cuadro_azul) ELSE
+        WHITE WHEN (VideoOn = '1') ELSE
         x"00";
 
 END MainArch;

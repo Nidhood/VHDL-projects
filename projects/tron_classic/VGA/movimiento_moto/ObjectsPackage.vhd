@@ -23,7 +23,7 @@ PACKAGE ObjectsPackage IS
     PosX => Int2SLV(400, 11),
     PosY => Int2SLV(300, 11),
     Size => Int2SLV(40, 11),
-	 Orientation => "01"
+	 Orientation => "11"
   );
 
   CONSTANT Titulo : Moto := (
