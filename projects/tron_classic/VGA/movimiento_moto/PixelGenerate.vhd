@@ -17,72 +17,86 @@ ENTITY PixelGenerate IS
 END PixelGenerate;
 
 ARCHITECTURE MainArch OF PixelGenerate IS
-    SIGNAL PX, PY : INTEGER;
+    SIGNAL PX, PY : uint11;
 
-    -- Señales para verificar áreas activas
     SIGNAL en_moto_area    : BOOLEAN;
     SIGNAL en_titulo_area  : BOOLEAN;
     SIGNAL en_cuadro_azul  : BOOLEAN;
 
-    -- Señales para fondos rosados
     SIGNAL es_fondo_moto   : BOOLEAN;
-    SIGNAL es_fondo_titulo : BOOLEAN;
+
+    SIGNAL i, j : uint06;
+    SIGNAL i_rot, j_rot : uint06;
+	 
+	 SIGNAL OrientationMoto1 : uint02;
+
+    CONSTANT N : uint06 := Int2SLV(40, 6);
+	 
+--00 -> Arriba
+--01 -> Abajo
+--10 -> Derecha
+--11 -> Izquierda
+  
 
 BEGIN
-    -- Conversión de coordenadas
-    PX <= Slv2Int(PosX);
-    PY <= Slv2Int(PosY);
 
-    -- Áreas de la moto y título
+
+    PX <= PosX;
+    PY <= PosY;
+
+    i <= Int2SLV(SLV2Int(PY) - SLV2Int(Moto1.PosY), 6);
+    j <= Int2SLV(SLV2Int(PX) - SLV2Int(Moto1.PosX), 6);
+
+    OrientationMoto1 <= Moto1.Orientation;
+
+    i_rot <= i when OrientationMoto1 = "10" else
+             i when OrientationMoto1 = "11" else
+             Int2SLV(SLV2Int(N) - 1 - SLV2Int(j), 6) when OrientationMoto1 = "01" else
+             j when OrientationMoto1 = "00" else
+             i;
+
+    j_rot <= j when OrientationMoto1 = "10" else
+             Int2SLV(SLV2Int(N) - 1 - SLV2Int(j), 6) when OrientationMoto1 = "11" else
+             i when OrientationMoto1 = "01" else
+             Int2SLV(SLV2Int(N) - 1 - SLV2Int(i), 6) when OrientationMoto1 = "00" else
+             j;
+
     en_moto_area <= (
-        PX >= Moto1.PosX AND PX < Moto1.PosX + Moto1.Size AND
-        PY >= Moto1.PosY AND PY < Moto1.PosY + Moto1.Size
+        SLV2Int(PX) >= SLV2Int(Moto1.PosX) AND SLV2Int(PX) < SLV2Int(Moto1.PosX) + SLV2Int(Moto1.Size) AND
+        SLV2Int(PY) >= SLV2Int(Moto1.PosY) AND SLV2Int(PY) < SLV2Int(Moto1.PosY) + SLV2Int(Moto1.Size)
     );
 
-    en_titulo_area <= (
-        PX >= Titulo.PosX AND PX < Titulo.PosX + Titulo.Size AND
-        PY >= Titulo.PosY AND PY < Titulo.PosY + Titulo.Size
-    );
-
-    -- Área del cuadro azul oscuro
     en_cuadro_azul <= (
-        PX >= 20 AND PX <= 780 AND
-        PY >= 100 AND PY <= 580
+        PX >= Int2SLV(0, 11) AND PX <= Int2SLV(800, 11) AND
+        PY >= Int2SLV(70, 11) AND PY <= Int2SLV(600, 11)
     );
 
-    -- Fondo rosado (255, 102, 255)
+    -- Transparencia
     es_fondo_moto <= (
-        MotoPlantilla_DerechaR(PY - Moto1.PosY, PX - Moto1.PosX) = x"FF" AND
-        MotoPlantilla_DerechaG(PY - Moto1.PosY, PX - Moto1.PosX) = x"66" AND
-        MotoPlantilla_DerechaB(PY - Moto1.PosY, PX - Moto1.PosX) = x"FF"
-    );
-
-    es_fondo_titulo <= (
-        Plantilla_TronB(PY - Titulo.PosY, PX - Titulo.PosX) = x"FF"
+        MotoPlantilla_DerechaR(SLV2Int(i_rot), SLV2Int(j_rot)) = x"E1" AND
+        MotoPlantilla_DerechaG(SLV2Int(i_rot), SLV2Int(j_rot)) = x"07" AND
+        MotoPlantilla_DerechaB(SLV2Int(i_rot), SLV2Int(j_rot)) = x"FF"
     );
 
     -- RGB.R
     RGB.R <=
-        Plantilla_TronB(PY - Titulo.PosY, PX - Titulo.PosX) when (VideoOn = '1' AND en_titulo_area AND NOT es_fondo_titulo) else
-        MotoPlantilla_DerechaR(PY - Moto1.PosY, PX - Moto1.PosX) when (VideoOn = '1' AND en_moto_area AND NOT es_fondo_moto) else
+        MotoPlantilla_DerechaR(SLV2Int(i_rot), SLV2Int(j_rot)) when (VideoOn = '1' AND en_moto_area AND NOT es_fondo_moto) else
         x"00" when (VideoOn = '1' AND en_cuadro_azul) else
-        x"10" when (VideoOn = '1') else
+        x"FF" when (VideoOn = '1') else
         x"00";
 
     -- RGB.G
     RGB.G <=
-        Plantilla_TronB(PY - Titulo.PosY, PX - Titulo.PosX) when (VideoOn = '1' AND en_titulo_area AND NOT es_fondo_titulo) else
-        MotoPlantilla_DerechaG(PY - Moto1.PosY, PX - Moto1.PosX) when (VideoOn = '1' AND en_moto_area AND NOT es_fondo_moto) else
+        MotoPlantilla_DerechaG(SLV2Int(i_rot), SLV2Int(j_rot)) when (VideoOn = '1' AND en_moto_area AND NOT es_fondo_moto) else
         x"00" when (VideoOn = '1' AND en_cuadro_azul) else
-        x"10" when (VideoOn = '1') else
+        x"FF" when (VideoOn = '1') else
         x"00";
 
     -- RGB.B
     RGB.B <=
-        Plantilla_TronB(PY - Titulo.PosY, PX - Titulo.PosX) when (VideoOn = '1' AND en_titulo_area AND NOT es_fondo_titulo) else
-        MotoPlantilla_DerechaB(PY - Moto1.PosY, PX - Moto1.PosX) when (VideoOn = '1' AND en_moto_area AND NOT es_fondo_moto) else
+        MotoPlantilla_DerechaB(SLV2Int(i_rot), SLV2Int(j_rot)) when (VideoOn = '1' AND en_moto_area AND NOT es_fondo_moto) else
         x"80" when (VideoOn = '1' AND en_cuadro_azul) else
-        x"10" when (VideoOn = '1') else
+        x"FF" when (VideoOn = '1') else
         x"00";
 
 END MainArch;
