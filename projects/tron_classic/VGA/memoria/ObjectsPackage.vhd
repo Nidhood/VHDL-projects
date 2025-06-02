@@ -48,7 +48,7 @@ PACKAGE ObjectsPackage IS
 		N_Vidas => "11"
 	);
 
-	-- Valores iniciales de la moto 2
+	-- Valores iniciales de la moto 3
 	CONSTANT Moto3_Initial : MotoT := (
 		PosX => Int2SLV(740, 11),
 		PosY => Int2SLV(500, 11),
@@ -57,6 +57,20 @@ PACKAGE ObjectsPackage IS
 		Vidas_PosX1 => Int2SLV(380, 11),
 		Vidas_PosX2 => Int2SLV((380 + 35), 11),
 		Vidas_PosX3 => Int2SLV((380 + 35 + 35), 11),
+		Vidas_PosY => Int2SLV(10, 11),
+		Vidas_SizeW => Int2SLV(34, 11),
+		N_Vidas => "11"
+	);
+
+	-- Valores iniciales de la moto 4
+	CONSTANT Moto4_Initial : MotoT := (
+		PosX => Int2SLV(10, 11),
+		PosY => Int2SLV(500, 11),
+		Size => Int2SLV(50, 11),
+		Orientation => "10",
+		Vidas_PosX1 => Int2SLV(565, 11),
+		Vidas_PosX2 => Int2SLV((565 + 35), 11),
+		Vidas_PosX3 => Int2SLV((565 + 35 + 35), 11),
 		Vidas_PosY => Int2SLV(10, 11),
 		Vidas_SizeW => Int2SLV(34, 11),
 		N_Vidas => "11"

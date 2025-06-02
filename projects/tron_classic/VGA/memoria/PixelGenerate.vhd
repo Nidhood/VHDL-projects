@@ -9,6 +9,7 @@ USE WORK.ObjectsPackage.ALL;
 
 ENTITY PixelGenerate IS
     PORT (
+        Clk : IN STD_LOGIC;
         PosX : IN uint11;
         PosY : IN uint11;
         MotoX1 : IN uint11;
@@ -17,13 +18,17 @@ ENTITY PixelGenerate IS
         MotoY2 : IN uint11;
         MotoX3 : IN uint11;
         MotoY3 : IN uint11;
+        MotoX4 : IN uint11;
+        MotoY4 : IN uint11;
         VideoOn : IN uint01;
         MotoCurrent1 : IN MotoT;
         MotoCurrent2 : IN MotoT;
         MotoCurrent3 : IN MotoT;
-        Trail1 : IN uint02; -- Usamos solo Moto1 para el trail
-        Trail2 : IN uint02;
-        Trail3 : IN uint02;
+        MotoCurrent4 : IN MotoT;
+        Trail1 : IN uint03;
+        Trail2 : IN uint03;
+        Trail3 : IN uint03;
+        Trail4 : IN uint03;
         RGB : OUT ColorT
     );
 END ENTITY;
@@ -32,7 +37,7 @@ ARCHITECTURE MainArch OF PixelGenerate IS
     SIGNAL PX, PY : uint11;
 
     -- Areas de motos --
-    SIGNAL en_moto1_area, en_moto2_area, en_moto3_area : BOOLEAN;
+    SIGNAL en_moto1_area, en_moto2_area, en_moto3_area, en_moto4_area : BOOLEAN;
 
     -- Fondo Azul --
     SIGNAL en_cuadro_azul : BOOLEAN;
@@ -41,35 +46,41 @@ ARCHITECTURE MainArch OF PixelGenerate IS
     SIGNAL en_vidas1_1, en_vidas1_2, en_vidas1_3 : BOOLEAN;
     SIGNAL en_vidas2_1, en_vidas2_2, en_vidas2_3 : BOOLEAN;
     SIGNAL en_vidas3_1, en_vidas3_2, en_vidas3_3 : BOOLEAN;
+    SIGNAL en_vidas4_1, en_vidas4_2, en_vidas4_3 : BOOLEAN;
 
     -- Fondo de motos --
-    SIGNAL es_fondo_moto1, es_fondo_moto2, es_fondo_moto3 : BOOLEAN;
+    SIGNAL es_fondo_moto1, es_fondo_moto2, es_fondo_moto3, es_fondo_moto4 : BOOLEAN;
 
     -- Fondo de vidas --
     SIGNAL es_fondo_vidas1_1, es_fondo_vidas1_2, es_fondo_vidas1_3 : BOOLEAN;
     SIGNAL es_fondo_vidas2_1, es_fondo_vidas2_2, es_fondo_vidas2_3 : BOOLEAN;
     SIGNAL es_fondo_vidas3_1, es_fondo_vidas3_2, es_fondo_vidas3_3 : BOOLEAN;
+    SIGNAL es_fondo_vidas4_1, es_fondo_vidas4_2, es_fondo_vidas4_3 : BOOLEAN;
 
     -- Indices iniciales motos --
     SIGNAL i1, j1 : uint06;
     SIGNAL i2, j2 : uint06;
     SIGNAL i3, j3 : uint06;
+    SIGNAL i4, j4 : uint06;
 
     -- Indices de rotacion motos --
     SIGNAL i1_rot, j1_rot : uint06;
     SIGNAL i2_rot, j2_rot : uint06;
     SIGNAL i3_rot, j3_rot : uint06;
+    SIGNAL i4_rot, j4_rot : uint06;
 
     -- Indices de vidas -
     SIGNAL i_vidas : uint06;
     SIGNAL j_vidas1_1, j_vidas1_2, j_vidas1_3 : uint06;
     SIGNAL j_vidas2_1, j_vidas2_2, j_vidas2_3 : uint06;
     SIGNAL j_vidas3_1, j_vidas3_2, j_vidas3_3 : uint06;
+    SIGNAL j_vidas4_1, j_vidas4_2, j_vidas4_3 : uint06;
 
     -- Orientacion Motos --
     SIGNAL OrientationMoto1 : uint02;
     SIGNAL OrientationMoto2 : uint02;
     SIGNAL OrientationMoto3 : uint02;
+    SIGNAL OrientationMoto4 : uint02;
 
     -- Constantes para el tamano de la celda 50×50 --
     CONSTANT N : uint06 := Int2SLV(50, 6);
@@ -85,14 +96,22 @@ ARCHITECTURE MainArch OF PixelGenerate IS
     SIGNAL local_y_u : uint06;
     SIGNAL valid_cell : uint01;
 
-    -- Constantes para limites (todos uint11)
+    -- Constantes para limites
     CONSTANT C10 : uint11 := Int2SLV(10, 11);
     CONSTANT C70 : uint11 := Int2SLV(70, 11);
-    CONSTANT C790 : uint11 := Int2SLV(790, 11); -- 10 + 15*50 = 760; para < usamos 790
-    CONSTANT C620 : uint11 := Int2SLV(620, 11); -- 70 + 11*50 = 620
+    CONSTANT C790 : uint11 := Int2SLV(770, 11); -- 10 + 15*50 = 760; para < usamos 790
+    CONSTANT C620 : uint11 := Int2SLV(630, 11); -- 70 + 11*50 = 620
 
     SIGNAL shifted_xt : unsigned(10 DOWNTO 0);
     SIGNAL shifted_yt : unsigned(10 DOWNTO 0);
+
+    SIGNAL reg_valid_trail : STD_LOGIC := '0';
+    SIGNAL reg_trail1 : uint02 := (OTHERS => '0');
+    SIGNAL reg_trail2 : uint02 := (OTHERS => '0');
+    SIGNAL reg_trail3 : uint02 := (OTHERS => '0');
+    SIGNAL reg_trail4 : uint02 := (OTHERS => '0');
+    SIGNAL en_cuadro_azul : STD_LOGIC;
+    SIGNAL reg_en_cuadro : STD_LOGIC := '0';
 
     SIGNAL col_idx_ut : uint04; -- 0..14, “1111” = fuera de rango dentro de 20×20
     SIGNAL row_idx_ut : uint04; -- 0..10, “1111” = fuera de rango dentro de 20×20
@@ -102,8 +121,8 @@ ARCHITECTURE MainArch OF PixelGenerate IS
 
     CONSTANT CT10 : uint11 := Int2SLV(10, 11); -- mismo offset
     CONSTANT CT70 : uint11 := Int2SLV(70, 11);
-    CONSTANT CT310 : uint11 := Int2SLV(10 + 15 * 20, 11); -- = 310
-    CONSTANT CT290 : uint11 := Int2SLV(70 + 11 * 20, 11); -- = 290
+    CONSTANT CT310 : uint11 := Int2SLV(10 + 38 * 20, 11); -- = 770
+    CONSTANT CT290 : uint11 := Int2SLV(70 + 28 * 20, 11); -- = 630
 
 BEGIN
     ----------------------------------------------------------------
@@ -250,6 +269,9 @@ BEGIN
 
     i3 <= Int2SLV(SLV2Int(PY) - SLV2Int(MotoY3), 6);
     j3 <= Int2SLV(SLV2Int(PX) - SLV2Int(MotoX3), 6);
+
+    i4 <= Int2SLV(SLV2Int(PY) - SLV2Int(MotoY4), 6);
+    j4 <= Int2SLV(SLV2Int(PX) - SLV2Int(MotoX4), 6);
     -- Indices de rotacion motos --
 
     -- Moto 1
@@ -294,6 +316,20 @@ BEGIN
         Int2SLV(SLV2Int(N) - 1 - SLV2Int(i3), 6) WHEN OrientationMoto3 = "00" ELSE
         j3;
 
+    -- Moto 4
+    OrientationMoto4 <= MotoCurrent4.Orientation;
+    i4_rot <= i4 WHEN OrientationMoto4 = "10" ELSE
+        i4 WHEN OrientationMoto4 = "11" ELSE
+        Int2SLV(SLV2Int(N) - 1 - SLV2Int(j4), 6) WHEN OrientationMoto4 = "01" ELSE
+        j4 WHEN OrientationMoto4 = "00" ELSE
+        i4;
+
+    j4_rot <= j4 WHEN OrientationMoto4 = "10" ELSE
+        Int2SLV(SLV2Int(N) - 1 - SLV2Int(j4), 6) WHEN OrientationMoto4 = "11" ELSE
+        i4 WHEN OrientationMoto4 = "01" ELSE
+        Int2SLV(SLV2Int(N) - 1 - SLV2Int(i4), 6) WHEN OrientationMoto4 = "00" ELSE
+        j4;
+
     ----------------------------------------------------------------
     -- Calculo de indices para “vidas”
     ----------------------------------------------------------------
@@ -313,6 +349,11 @@ BEGIN
     j_vidas3_1 <= Int2SLV(SLV2Int(PX) - SLV2Int(Moto3_Initial.Vidas_PosX1), 6);
     j_vidas3_2 <= Int2SLV(SLV2Int(PX) - SLV2Int(Moto3_Initial.Vidas_PosX2), 6);
     j_vidas3_3 <= Int2SLV(SLV2Int(PX) - SLV2Int(Moto3_Initial.Vidas_PosX3), 6);
+
+    -- Moto 4
+    j_vidas4_1 <= Int2SLV(SLV2Int(PX) - SLV2Int(Moto4_Initial.Vidas_PosX1), 6);
+    j_vidas4_2 <= Int2SLV(SLV2Int(PX) - SLV2Int(Moto4_Initial.Vidas_PosX2), 6);
+    j_vidas4_3 <= Int2SLV(SLV2Int(PX) - SLV2Int(Moto4_Initial.Vidas_PosX3), 6);
 
     ----------------------------------------------------------------
     -- Definir zonas de moto, vidas y fondo
@@ -338,6 +379,13 @@ BEGIN
         SLV2Int(PX) < SLV2Int(MotoX3) + SLV2Int(Moto3_Initial.Size) AND
         SLV2Int(PY) >= SLV2Int(MotoY3) AND
         SLV2Int(PY) < SLV2Int(MotoY3) + SLV2Int(Moto3_Initial.Size));
+
+    -- Moto 4
+    en_moto4_area <=
+        (SLV2Int(PX) >= SLV2Int(MotoX4) AND
+        SLV2Int(PX) < SLV2Int(MotoX4) + SLV2Int(Moto4_Initial.Size) AND
+        SLV2Int(PY) >= SLV2Int(MotoY4) AND
+        SLV2Int(PY) < SLV2Int(MotoY4) + SLV2Int(Moto4_Initial.Size));
 
     -- Cuadro azul
     en_cuadro_azul <=
@@ -407,6 +455,27 @@ BEGIN
         SLV2Int(PY) >= SLV2Int(Moto3_Initial.Vidas_PosY) AND
         SLV2Int(PY) < SLV2Int(Moto3_Initial.Vidas_PosY) + 50);
 
+    -- Moto 4 - 1
+    en_vidas4_1 <=
+        (SLV2Int(PX) >= SLV2Int(Moto4_Initial.Vidas_PosX1) AND
+        SLV2Int(PX) < SLV2Int(Moto4_Initial.Vidas_PosX1) + 35 AND
+        SLV2Int(PY) >= SLV2Int(Moto4_Initial.Vidas_PosY) AND
+        SLV2Int(PY) < SLV2Int(Moto4_Initial.Vidas_PosY) + 50);
+
+    -- Moto 4 - 2
+    en_vidas4_2 <=
+        (SLV2Int(PX) >= SLV2Int(Moto4_Initial.Vidas_PosX2) AND
+        SLV2Int(PX) < SLV2Int(Moto4_Initial.Vidas_PosX2) + 35 AND
+        SLV2Int(PY) >= SLV2Int(Moto4_Initial.Vidas_PosY) AND
+        SLV2Int(PY) < SLV2Int(Moto4_Initial.Vidas_PosY) + 50);
+
+    -- Moto 4 - 3
+    en_vidas4_3 <=
+        (SLV2Int(PX) >= SLV2Int(Moto4_Initial.Vidas_PosX3) AND
+        SLV2Int(PX) < SLV2Int(Moto4_Initial.Vidas_PosX3) + 35 AND
+        SLV2Int(PY) >= SLV2Int(Moto4_Initial.Vidas_PosY) AND
+        SLV2Int(PY) < SLV2Int(Moto4_Initial.Vidas_PosY) + 50);
+
     ----------------------------------------------------------------
     -- Detectar magenta en plantillas (fondo de moto)
     ----------------------------------------------------------------
@@ -428,6 +497,12 @@ BEGIN
         (MotoPlantilla_DerechaR(SLV2Int(i3_rot), SLV2Int(j3_rot)) = x"FF" AND
         MotoPlantilla_DerechaG(SLV2Int(i3_rot), SLV2Int(j3_rot)) = x"00" AND
         MotoPlantilla_DerechaB(SLV2Int(i3_rot), SLV2Int(j3_rot)) = x"DC");
+
+    -- Moto 4
+    es_fondo_moto4 <=
+        (MotoPlantilla_DerechaR(SLV2Int(i4_rot), SLV2Int(j4_rot)) = x"FF"
+        AND MotoPlantilla_DerechaG(SLV2Int(i4_rot), SLV2Int(j4_rot)) = x"00"
+        AND MotoPlantilla_DerechaB(SLV2Int(i4_rot), SLV2Int(j4_rot)) = x"DC");
 
     ----------------------------------------------------------------
     -- Detectar magenta en “vidas” (fondo de vidas)
@@ -486,6 +561,24 @@ BEGIN
         (VidasR(SLV2Int(i_vidas), SLV2Int(j_vidas3_3)) = x"FF" AND
         VidasG(SLV2Int(i_vidas), SLV2Int(j_vidas3_3)) = x"00" AND
         VidasB(SLV2Int(i_vidas), SLV2Int(j_vidas3_3)) = x"DC");
+
+    -- Moto 4 - 1
+    es_fondo_vidas4_1 <=
+        (VidasR(SLV2Int(i_vidas), SLV2Int(j_vidas4_1)) = x"FF" AND
+        VidasG(SLV2Int(i_vidas), SLV2Int(j_vidas4_1)) = x"00" AND
+        VidasB(SLV2Int(i_vidas), SLV2Int(j_vidas4_1)) = x"DC");
+
+    -- Moto 4 - 2
+    es_fondo_vidas4_2 <=
+        (VidasR(SLV2Int(i_vidas), SLV2Int(j_vidas4_2)) = x"FF" AND
+        VidasG(SLV2Int(i_vidas), SLV2Int(j_vidas4_2)) = x"00" AND
+        VidasB(SLV2Int(i_vidas), SLV2Int(j_vidas4_2)) = x"DC");
+
+    -- Moto 4 - 3
+    es_fondo_vidas4_3 <=
+        (VidasR(SLV2Int(i_vidas), SLV2Int(j_vidas4_3)) = x"FF" AND
+        VidasG(SLV2Int(i_vidas), SLV2Int(j_vidas4_3)) = x"00" AND
+        VidasB(SLV2Int(i_vidas), SLV2Int(j_vidas4_3)) = x"DC");
 
     --------------------------------------------------------------------------------------------------------------------------------------------------------------------
     -------------------------------------------------- RGB ------------------------------------------------------------------------------------------------------------- 
@@ -570,8 +663,45 @@ BEGIN
     VidasR(SLV2Int(i_vidas), SLV2Int(j_vidas3_3))
     WHEN (VideoOn = '1' AND SLV2Int(Moto3_Initial.N_Vidas) = 3 AND en_vidas3_3 AND NOT es_fondo_vidas3_3) ELSE
 
-    ------------------------------------------------------- TRAIL (20×20 bloque completo) --------------------------------------------------------------------------------
-    x"0C" WHEN (VideoOn = '1' AND valid_cell = '1' AND Trail1 = "01") ELSE
+    ------------------------------------------------------- MOTO 4 -------------------------------------------------------------------------------------------
+    -- Cambio de color de azul (R: 0C G: C7 B: FA) a rojo (R: FF G: 00 B: 00)
+    -- Impresion Moto
+    x"FF"
+    WHEN (VideoOn = '1' AND en_moto4_area AND
+    MotoPlantilla_DerechaR(SLV2Int(i4_rot), SLV2Int(j4_rot)) = x"0C" AND
+    MotoPlantilla_DerechaG(SLV2Int(i4_rot), SLV2Int(j4_rot)) = x"C7" AND
+    MotoPlantilla_DerechaB(SLV2Int(i4_rot), SLV2Int(j4_rot)) = x"FA") ELSE
+    MotoPlantilla_DerechaR(SLV2Int(i4_rot), SLV2Int(j4_rot)) WHEN (VideoOn = '1' AND en_moto4_area AND NOT es_fondo_moto4) ELSE
+
+    -- Impresion vidas Moto 4 - 1
+    x"FF" WHEN (VideoOn = '1' AND en_vidas4_1 AND
+    VidasR(SLV2Int(i_vidas), SLV2Int(j_vidas4_1)) = x"0C" AND
+    VidasG(SLV2Int(i_vidas), SLV2Int(j_vidas4_1)) = x"C7" AND
+    VidasB(SLV2Int(i_vidas), SLV2Int(j_vidas4_1)) = x"FA") ELSE
+    VidasR(SLV2Int(i_vidas), SLV2Int(j_vidas4_1))
+    WHEN (VideoOn = '1' AND SLV2Int(Moto4_Initial.N_Vidas) >= 1 AND en_vidas4_1 AND NOT es_fondo_vidas4_1) ELSE
+
+    -- Impresion vidas Moto 4 - 2
+    x"FF" WHEN (VideoOn = '1' AND en_vidas4_2 AND
+    VidasR(SLV2Int(i_vidas), SLV2Int(j_vidas4_2)) = x"0C" AND
+    VidasG(SLV2Int(i_vidas), SLV2Int(j_vidas4_2)) = x"C7" AND
+    VidasB(SLV2Int(i_vidas), SLV2Int(j_vidas4_2)) = x"FA") ELSE
+    VidasR(SLV2Int(i_vidas), SLV2Int(j_vidas4_2))
+    WHEN (VideoOn = '1' AND SLV2Int(Moto4_Initial.N_Vidas) >= 2 AND en_vidas4_2 AND NOT es_fondo_vidas4_2) ELSE
+
+    -- Impresion vidas Moto 4 - 3
+    x"FF" WHEN (VideoOn = '1' AND en_vidas4_3 AND
+    VidasR(SLV2Int(i_vidas), SLV2Int(j_vidas4_3)) = x"0C" AND
+    VidasG(SLV2Int(i_vidas), SLV2Int(j_vidas4_3)) = x"C7" AND
+    VidasB(SLV2Int(i_vidas), SLV2Int(j_vidas4_3)) = x"FA") ELSE
+    VidasR(SLV2Int(i_vidas), SLV2Int(j_vidas4_3))
+    WHEN (VideoOn = '1' AND SLV2Int(Moto4_Initial.N_Vidas) = 3 AND en_vidas4_3 AND NOT es_fondo_vidas4_3) ELSE
+
+    ------------------------------------------------------- TRAILS (20×20 bloque completo) --------------------------------------------------------------------------------
+    x"0C" WHEN (VideoOn = '1' AND valid_trail = '1' AND Trail1 = "001") ELSE
+    x"FF" WHEN (VideoOn = '1' AND valid_trail = '1' AND Trail2 = "010") ELSE
+    x"FF" WHEN (VideoOn = '1' AND valid_trail = '1' AND Trail3 = "011") ELSE
+    x"FF" WHEN (VideoOn = '1' AND valid_trail = '1' AND Trail4 = "100") ELSE
 
     ------------------------------------------------------- FONDO AZUL DE LA CANCHA --------------------------------------------------------------------------------
     x"00" WHEN (VideoOn = '1' AND en_cuadro_azul) ELSE
@@ -650,8 +780,41 @@ BEGIN
     VidasB(SLV2Int(i_vidas), SLV2Int(j_vidas3_3)) = x"FA") ELSE
     VidasG(SLV2Int(i_vidas), SLV2Int(j_vidas3_3)) WHEN (VideoOn = '1' AND SLV2Int(Moto3_Initial.N_Vidas) = 3 AND en_vidas3_3 AND NOT es_fondo_vidas3_3) ELSE
 
-    ------------------------------------------------------- TRAIL (20×20 bloque completo) --------------------------------------------------------------------------------
-    x"C7" WHEN (VideoOn = '1' AND valid_cell = '1' AND Trail1 = "01") ELSE
+    ------------------------------------------------------- MOTO 4 -------------------------------------------------------------------------------------------
+    -- Cambio de color de azul (R: 0C G: C7 B: FA) a rojo (R: FF G: 00 B: 00)
+    -- Impresion Moto
+    x"00" WHEN (VideoOn = '1' AND en_moto4_area AND
+    MotoPlantilla_DerechaR(SLV2Int(i4_rot), SLV2Int(j4_rot)) = x"0C" AND
+    MotoPlantilla_DerechaG(SLV2Int(i4_rot), SLV2Int(j4_rot)) = x"C7" AND
+    MotoPlantilla_DerechaB(SLV2Int(i4_rot), SLV2Int(j4_rot)) = x"FA") ELSE
+    MotoPlantilla_DerechaG(SLV2Int(i4_rot), SLV2Int(j4_rot)) WHEN (VideoOn = '1' AND en_moto4_area AND NOT es_fondo_moto4) ELSE
+
+    -- Impresion vidas Moto 4 - 1
+    x"00" WHEN (VideoOn = '1' AND en_vidas4_1 AND
+    VidasR(SLV2Int(i_vidas), SLV2Int(j_vidas4_1)) = x"0C" AND
+    VidasG(SLV2Int(i_vidas), SLV2Int(j_vidas4_1)) = x"C7" AND
+    VidasB(SLV2Int(i_vidas), SLV2Int(j_vidas4_1)) = x"FA") ELSE
+    VidasG(SLV2Int(i_vidas), SLV2Int(j_vidas4_1)) WHEN (VideoOn = '1' AND SLV2Int(Moto4_Initial.N_Vidas) >= 1 AND en_vidas4_1 AND NOT es_fondo_vidas4_1) ELSE
+
+    -- Impresion vidas Moto 4 - 2
+    x"00" WHEN (VideoOn = '1' AND en_vidas4_2 AND
+    VidasR(SLV2Int(i_vidas), SLV2Int(j_vidas4_2)) = x"0C" AND
+    VidasG(SLV2Int(i_vidas), SLV2Int(j_vidas4_2)) = x"C7" AND
+    VidasB(SLV2Int(i_vidas), SLV2Int(j_vidas4_2)) = x"FA") ELSE
+    VidasG(SLV2Int(i_vidas), SLV2Int(j_vidas4_2)) WHEN (VideoOn = '1' AND SLV2Int(Moto4_Initial.N_Vidas) >= 2 AND en_vidas4_2 AND NOT es_fondo_vidas4_2) ELSE
+
+    -- Impresion vidas Moto 4 - 3
+    x"00" WHEN (VideoOn = '1' AND en_vidas4_3 AND
+    VidasR(SLV2Int(i_vidas), SLV2Int(j_vidas4_3)) = x"0C" AND
+    VidasG(SLV2Int(i_vidas), SLV2Int(j_vidas4_3)) = x"C7" AND
+    VidasB(SLV2Int(i_vidas), SLV2Int(j_vidas4_3)) = x"FA") ELSE
+    VidasG(SLV2Int(i_vidas), SLV2Int(j_vidas4_3)) WHEN (VideoOn = '1' AND SLV2Int(Moto4_Initial.N_Vidas) = 3 AND en_vidas4_3 AND NOT es_fondo_vidas4_3) ELSE
+
+    ------------------------------------------------------- TRAILS (20×20 bloque completo) --------------------------------------------------------------------------------
+    x"C7" WHEN (VideoOn = '1' AND valid_trail = '1' AND Trail1 = "001") ELSE
+    x"A5" WHEN (VideoOn = '1' AND valid_trail = '1' AND Trail2 = "010") ELSE
+    x"FF" WHEN (VideoOn = '1' AND valid_trail = '1' AND Trail3 = "011") ELSE
+    x"00" WHEN (VideoOn = '1' AND valid_trail = '1' AND Trail4 = "100") ELSE
 
     ------------------------------------------------------- FONDO AZUL DE LA CANCHA --------------------------------------------------------------------------------
     x"00" WHEN (VideoOn = '1' AND en_cuadro_azul) ELSE
@@ -729,8 +892,41 @@ BEGIN
     VidasB(SLV2Int(i_vidas), SLV2Int(j_vidas3_3)) = x"FA") ELSE
     VidasB(SLV2Int(i_vidas), SLV2Int(j_vidas3_3)) WHEN (VideoOn = '1' AND SLV2Int(Moto3_Initial.N_Vidas) = 3 AND en_vidas3_3 AND NOT es_fondo_vidas3_3) ELSE
 
-    ------------------------------------------------------- TRAIL (20×20 con bloque completo) --------------------------------------------------------------------------------
-    x"FA" WHEN (VideoOn = '1' AND valid_cell = '1' AND Trail1 = "01") ELSE
+    ------------------------------------------------------- MOTO 4 -------------------------------------------------------------------------------------------
+    -- Cambio de color de azul (R: 0C G: C7 B: FA) a rojo (R: FF G: 00 B: 00)
+    -- Impresion Moto
+    x"00" WHEN (VideoOn = '1' AND en_moto4_area AND
+    MotoPlantilla_DerechaR(SLV2Int(i4_rot), SLV2Int(j4_rot)) = x"0C" AND
+    MotoPlantilla_DerechaG(SLV2Int(i4_rot), SLV2Int(j4_rot)) = x"C7" AND
+    MotoPlantilla_DerechaB(SLV2Int(i4_rot), SLV2Int(j4_rot)) = x"FA") ELSE
+    MotoPlantilla_DerechaB(SLV2Int(i4_rot), SLV2Int(j4_rot)) WHEN (VideoOn = '1' AND en_moto4_area AND NOT es_fondo_moto4) ELSE
+
+    -- Impresion vidas Moto 4 - 1
+    x"00" WHEN (VideoOn = '1' AND en_vidas4_1 AND
+    VidasR(SLV2Int(i_vidas), SLV2Int(j_vidas4_1)) = x"0C" AND
+    VidasG(SLV2Int(i_vidas), SLV2Int(j_vidas4_1)) = x"C7" AND
+    VidasB(SLV2Int(i_vidas), SLV2Int(j_vidas4_1)) = x"FA") ELSE
+    VidasB(SLV2Int(i_vidas), SLV2Int(j_vidas4_1)) WHEN (VideoOn = '1' AND SLV2Int(Moto4_Initial.N_Vidas) >= 1 AND en_vidas4_1 AND NOT es_fondo_vidas4_1) ELSE
+
+    -- Impresion vidas Moto 4 - 2
+    x"00" WHEN (VideoOn = '1' AND en_vidas4_2 AND
+    VidasR(SLV2Int(i_vidas), SLV2Int(j_vidas4_2)) = x"0C" AND
+    VidasG(SLV2Int(i_vidas), SLV2Int(j_vidas4_2)) = x"C7" AND
+    VidasB(SLV2Int(i_vidas), SLV2Int(j_vidas4_2)) = x"FA") ELSE
+    VidasB(SLV2Int(i_vidas), SLV2Int(j_vidas4_2)) WHEN (VideoOn = '1' AND SLV2Int(Moto4_Initial.N_Vidas) >= 2 AND en_vidas4_2 AND NOT es_fondo_vidas4_2) ELSE
+
+    -- Impresion vidas Moto 4 - 3
+    x"00" WHEN (VideoOn = '1' AND en_vidas4_3 AND
+    VidasR(SLV2Int(i_vidas), SLV2Int(j_vidas4_3)) = x"0C" AND
+    VidasG(SLV2Int(i_vidas), SLV2Int(j_vidas4_3)) = x"C7" AND
+    VidasB(SLV2Int(i_vidas), SLV2Int(j_vidas4_3)) = x"FA") ELSE
+    VidasB(SLV2Int(i_vidas), SLV2Int(j_vidas4_3)) WHEN (VideoOn = '1' AND SLV2Int(Moto4_Initial.N_Vidas) = 3 AND en_vidas4_3 AND NOT es_fondo_vidas4_3) ELSE
+
+    ------------------------------------------------------- TRAILS (20×20 con bloque completo) --------------------------------------------------------------------------------
+    x"FA" WHEN (VideoOn = '1' AND valid_trail = '1' AND Trail1 = "001") ELSE
+    x"00" WHEN (VideoOn = '1' AND valid_trail = '1' AND Trail2 = "010") ELSE
+    x"00" WHEN (VideoOn = '1' AND valid_trail = '1' AND Trail3 = "011") ELSE
+    x"00" WHEN (VideoOn = '1' AND valid_trail = '1' AND Trail4 = "100") ELSE
 
     ------------------------------------------------------- FONDO AZUL DE LA CANCHA --------------------------------------------------------------------------------
     x"8A" WHEN (VideoOn = '1' AND en_cuadro_azul) ELSE

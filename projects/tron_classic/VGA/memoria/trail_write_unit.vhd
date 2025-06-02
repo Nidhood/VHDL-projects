@@ -1,14 +1,13 @@
 ------------------------------------------------------------------
---              Ivan Dario Orozco Ibanez                        --
---  Project: Tron trail write unit                              --
---  Date: 22/25/2025                                            --          
+--              Ivan Dario Orozco Ibanez                        
+--  Project: Tron trail write unit                                
+--  Date: 22/25/2025                                            
 ------------------------------------------------------------------
 LIBRARY IEEE;
 USE IEEE.std_logic_1164.ALL;
 USE IEEE.numeric_std.ALL;
 USE work.BasicPackage.ALL;
 
-------------------------------------------------------------------
 ENTITY trail_write_unit IS
     PORT (
         clk : IN uint01;
@@ -21,7 +20,6 @@ ENTITY trail_write_unit IS
     );
 END ENTITY;
 
-------------------------------------------------------------------
 ARCHITECTURE trail_write_unit_arch OF trail_write_unit IS
     SIGNAL prev_x, prev_y : uint11 := (OTHERS => '0');
 BEGIN
@@ -30,8 +28,8 @@ BEGIN
         IF rising_edge(clk) THEN
             IF rst = '1' THEN
                 wr_en <= '0';
-                prev_x <= cur_x
-                    prev_y <= cur_y;
+                prev_x <= cur_x;
+                prev_y <= cur_y;
             ELSE
                 wr_en <= '0';
                 IF (cur_x /= prev_x) OR (cur_y /= prev_y) THEN
